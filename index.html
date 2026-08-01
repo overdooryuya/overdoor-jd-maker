@@ -97,6 +97,8 @@ textarea.pastebox{width:100%;height:110px;margin-top:6px;font-size:11px;border:1
 .pv .footbar{margin-top:10px;background:var(--dark);border-radius:5px;color:#fff;display:flex;justify-content:space-between;align-items:center;padding:8px 16px;font-size:9px}
 .pv .footbar .fl{font-weight:900;letter-spacing:4px;font-size:11px}
 .pv .footbar .fl .y{color:var(--yellow)}
+.jobdoc + .jobdoc{break-before:page;page-break-before:always;margin-top:40px;border-top:2px dashed var(--border);padding-top:40px}
+@media print{.jobdoc + .jobdoc{margin-top:0;border-top:none;padding-top:0}}
 /* ================= print ================= */
 @page{size:A4;margin:15mm 14mm}
 @media print{
@@ -115,6 +117,7 @@ textarea.pastebox{width:100%;height:110px;margin-top:6px;font-size:11px;border:1
   <div class="sub">求人票メーカー ― 他社フォーマットの求人票をOVERDOOR仕様に</div>
   <div class="spacer"></div>
   <button class="btn btn-ghost" onclick="resetAll()">新規作成</button>
+  <button class="btn btn-ghost" onclick="printAll()" title="全タブを1つのPDFに連結して印刷します">🖨 まとめて印刷</button>
   <button class="btn btn-print" onclick="window.print()">🖨 印刷 / PDF保存</button>
 </div>
 
@@ -272,8 +275,8 @@ function renderTabs(){
 function resetAll(){ addNewJob(); }
 
 /* ============ preview ============ */
-function upd(){
-  const b = state.basic;
+function buildDocHTML(d){
+  const b = d.basic||{};
   const bl = BASIC_KEYS_L.filter(k=>b[k]), br = BASIC_KEYS_R.filter(k=>b[k]);
   const n = Math.max(bl.length, br.length);
   let basicRows = "";
@@ -285,16 +288,16 @@ function upd(){
     });
     basicRows += "</tr>";
   }
-  const salv = $("salv").value.trim(), sals = $("sals").value.trim();
+  const salv = (d.salv||"").trim(), sals = (d.sals||"").trim();
   const salary = salv ? `<div class="salary"><span class="pill">想定年収</span><span class="sal-main">${esc(salv)}</span>${sals?`<span class="sal-sub">${esc(sals)}</span>`:""}</div>` : "";
-  const cl=$("cl").value.trim(), cr=$("cr").value.trim();
+  const cl=(d.cl||"").trim(), cr=(d.cr||"").trim();
   const cards = (cl||cr) ? `<div class="section"><div class="sec-head">どのような人を求めているか</div>
     <div class="cards">
-      <div class="card tc"><div class="card-head">${esc($("clt").value||"必要条件")}</div><div class="card-body">${nl2br(cl)}</div></div>
-      <div class="card yc"><div class="card-head">${esc($("crt").value||"内定の可能性が高い人")}</div><div class="card-body">${nl2br(cr)}</div></div>
+      <div class="card tc"><div class="card-head">${esc(d.clt||"必要条件")}</div><div class="card-body">${nl2br(cl)}</div></div>
+      <div class="card yc"><div class="card-head">${esc(d.crt||"内定の可能性が高い人")}</div><div class="card-body">${nl2br(cr)}</div></div>
     </div></div>` : "";
   let secs = "";
-  state.sections.forEach(sec=>{
+  (d.sections||[]).forEach(sec=>{
     const rows = sec.rows.filter(r=>r[0].trim()&&r[1].trim());
     if(!rows.length) return;
     secs += `<div class="section"><div class="sec-head">${esc(sec.heading)}</div>
@@ -305,13 +308,13 @@ function upd(){
     <table class="def"><colgroup><col style="width:17%"><col></colgroup>
     <tr><th>事業者名</th><td>株式会社OVER DOOR</td></tr>
     <tr><th>有料職業紹介許可番号</th><td>23-ユ-302895</td></tr></table></div>`;
-  $("pv").innerHTML = `
+  return `
     <div class="header"><div class="logo"><div class="mark"><span class="sq t"></span><span class="sq y"></span></div>
       <div><div class="wm">OVER DOOR</div><div class="tag">“働く”の可能性を、もっと楽しく</div></div></div>
       <div class="jd">JOB DESCRIPTION</div></div>
-    <div class="company">${esc($("company").value)||"（会社名）"}</div>
-    <h1>${esc($("title").value)||"（ポジション名）"}</h1>
-    ${$("catch").value.trim()?`<div class="catch">${esc($("catch").value)}</div>`:""}
+    <div class="company">${esc(d.company)||"（会社名）"}</div>
+    <h1>${esc(d.title)||"（ポジション名）"}</h1>
+    ${(d.catch||"").trim()?`<div class="catch">${esc(d.catch)}</div>`:""}
     ${basicRows?`<table class="basic">${basicRows}</table>`:""}
     ${salary}${cards}${secs}
     <div class="disclaimer">
@@ -321,8 +324,33 @@ function upd(){
     </div>
     <div class="footbar"><div class="fl">OVER <span class="y">DOOR</span></div>
       <div>“働く”の可能性を、もっと楽しく　｜　株式会社OVER DOOR（有料職業紹介許可番号 23-ユ-302895）</div></div>`;
+}
+function upd(){
+  $("pv").innerHTML = buildDocHTML(collect());
   document.title = ($("company").value&&$("title").value) ? `OVERDOOR求人票_${$("company").value}_${$("title").value}` : "OVERDOOR 求人票メーカー";
   renderTabs();
+}
+/* ============ まとめて印刷 ============ */
+function buildAllInto(){
+  saveActive();
+  $("pv").innerHTML = jobs.map(j=>`<div class="jobdoc">${buildDocHTML(j)}</div>`).join("");
+}
+function printAll(){
+  saveActive();
+  if(jobs.length<2){ window.print(); return; }
+  const prevTitle = document.title;
+  buildAllInto();
+  document.title = `OVERDOOR求人票_一括${jobs.length}件`;
+  let restored = false;
+  const restore = ()=>{
+    if(restored) return; restored = true;
+    document.title = prevTitle;
+    applyJob(jobs[active]);
+    window.removeEventListener("afterprint", restore);
+  };
+  window.addEventListener("afterprint", restore);
+  window.print();
+  setTimeout(restore, 1500); // afterprintが発火しないブラウザ向けフォールバック
 }
 
 /* ============ parser ============ */
