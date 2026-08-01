@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OVERDOOR 求人票メーカー</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+:root{
+  --teal:#38A4BB; --yellow:#E0D224; --dark:#253F48;
+  --label-bg:#E9F3F6; --border:#DCE5E9;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP","Yu Gothic",Meiryo,sans-serif;color:var(--dark);background:#eef3f5}
+/* ================= app layout ================= */
+.appbar{background:var(--dark);color:#fff;padding:10px 20px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:50}
+.appbar .lg{font-weight:900;letter-spacing:4px}
+.appbar .lg .y{color:var(--yellow)}
+.appbar .sub{font-size:12px;opacity:.85}
+.appbar .spacer{flex:1}
+.btn{border:none;border-radius:6px;padding:9px 18px;font-weight:800;font-size:13px;cursor:pointer}
+.btn-print{background:var(--yellow);color:var(--dark)}
+.btn-ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.4)}
+.wrap{display:flex;gap:0;align-items:flex-start}
+.editor{width:460px;flex:none;background:#fff;border-right:1px solid var(--border);min-height:calc(100vh - 50px);padding:16px 18px 60px}
+.stage{flex:1;padding:24px;display:flex;justify-content:center}
+.sheet{background:#fff;width:794px;min-height:1123px;box-shadow:0 2px 16px rgba(37,63,72,.18);padding:57px 53px}
+/* ================= editor ================= */
+.drop{border:2px dashed var(--teal);border-radius:10px;background:#f2fafc;padding:18px;text-align:center;color:var(--teal);font-size:13px;font-weight:700;cursor:pointer;transition:.15s}
+.drop.on{background:#dff2f7}
+.drop input{display:none}
+.drop small{display:block;font-weight:400;color:#5c7681;margin-top:4px}
+details.paste{margin-top:8px;font-size:12px}
+details.paste summary{cursor:pointer;color:var(--teal);font-weight:700}
+textarea.pastebox{width:100%;height:110px;margin-top:6px;font-size:11px;border:1px solid var(--border);border-radius:6px;padding:8px}
+.parse-note{font-size:11px;color:#946f00;background:#fdf7dc;border-radius:6px;padding:8px 10px;margin-top:8px;display:none}
+.ed-h{font-size:12.5px;font-weight:900;border-left:5px solid var(--teal);padding-left:8px;margin:20px 0 8px}
+.f{margin-bottom:8px}
+.f label{display:block;font-size:11px;font-weight:700;color:#41626e;margin-bottom:2px}
+.f input,.f textarea{width:100%;border:1px solid var(--border);border-radius:5px;padding:6px 8px;font-size:12px;font-family:inherit;color:var(--dark)}
+.f textarea{min-height:54px;resize:vertical;line-height:1.6}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px}
+.rowitem{border:1px solid var(--border);border-radius:7px;padding:8px;margin-bottom:8px;background:#fbfdfe}
+.rowitem .rhead{display:flex;gap:6px;margin-bottom:4px}
+.rowitem .rhead input{flex:1;font-weight:700}
+.mini{border:none;background:#e7eef1;color:#41626e;border-radius:5px;font-size:11px;padding:4px 8px;cursor:pointer;font-weight:700}
+.mini:hover{background:#d6e4e9}
+.mini.del{color:#a33}
+.addbar{margin:4px 0 14px}
+.sec-ed{border:1px solid var(--border);border-left:4px solid var(--teal);border-radius:8px;padding:10px;margin-bottom:12px;background:#fff}
+.sec-ed>.shead{display:flex;gap:6px;margin-bottom:8px}
+.sec-ed>.shead input{flex:1;font-weight:900;font-size:13px;border:1px solid var(--border);border-radius:5px;padding:5px 8px}
+.hint{font-size:11px;color:#5c7681;line-height:1.7;margin-top:6px}
+/* ================= preview (OVERDOOR design) ================= */
+.pv{font-size:10.5px;line-height:1.75;color:var(--dark)}
+.pv .header{display:flex;justify-content:space-between;align-items:center;padding-bottom:12px;border-bottom:3px solid var(--teal);margin-bottom:20px}
+.pv .logo{display:flex;align-items:center;gap:12px}
+.pv .mark{position:relative;width:40px;height:40px}
+.pv .sq{position:absolute;border-radius:9px}
+.pv .sq.t{width:32px;height:32px;left:0;top:0;background:var(--teal)}
+.pv .sq.y{width:20px;height:20px;left:10px;top:16px;background:var(--yellow)}
+.pv .wm{font-weight:900;font-size:17px;letter-spacing:5px}
+.pv .tag{font-size:8px;letter-spacing:3px;color:var(--teal);margin-top:1px}
+.pv .jd{border:2px solid var(--teal);border-radius:7px;color:var(--teal);font-weight:800;font-size:13px;letter-spacing:6px;padding:8px 16px 8px 22px}
+.pv .company{display:flex;align-items:center;gap:8px;color:var(--teal);font-weight:800;font-size:12.5px;margin-bottom:4px}
+.pv .company::before{content:"";width:12px;height:12px;border-radius:3px;background:var(--yellow);display:inline-block;flex:none}
+.pv h1{font-size:19px;font-weight:900;margin-bottom:4px}
+.pv .catch{color:#5c7681;font-size:9.5px;margin-bottom:4px}
+.pv table{border-collapse:collapse;width:100%}
+.pv th,.pv td{border:1px solid var(--border);padding:6px 12px;vertical-align:top;text-align:left;font-weight:normal}
+.pv th{background:var(--label-bg);font-weight:700}
+.pv .basic{margin-top:12px}
+.pv .basic th{width:13%;white-space:nowrap}
+.pv .basic td{width:37%}
+.pv .def th{width:17%}
+.pv .salary{background:var(--teal);border-radius:6px;color:#fff;margin-top:14px;padding:10px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.pv .pill{background:var(--yellow);color:var(--dark);font-weight:800;font-size:11px;border-radius:4px;padding:3px 12px;flex:none}
+.pv .sal-main{font-size:17.5px;font-weight:900;letter-spacing:.5px}
+.pv .sal-sub{font-size:10px;opacity:.95}
+.pv .section{margin-top:20px}
+.pv .sec-head{font-size:13px;font-weight:900;border-left:6px solid var(--teal);border-bottom:3px solid var(--yellow);padding:2px 0 6px 12px;margin-bottom:12px;page-break-after:avoid}
+.pv .cards{display:flex;gap:14px}
+.pv .card{flex:1;border-radius:6px;overflow:hidden}
+.pv .card-head{font-weight:800;font-size:11.5px;padding:6px 14px}
+.pv .tc{border:1.5px solid var(--teal)}
+.pv .tc .card-head{background:var(--teal);color:#fff}
+.pv .yc{border:1.5px solid var(--yellow)}
+.pv .yc .card-head{background:var(--yellow);color:var(--dark)}
+.pv .card-body{padding:8px 14px 10px}
+.pv .disclaimer{margin-top:26px;padding-top:8px;border-top:1px solid var(--border);color:#6b8089;font-size:8.5px;line-height:1.9}
+.pv .footbar{margin-top:10px;background:var(--dark);border-radius:5px;color:#fff;display:flex;justify-content:space-between;align-items:center;padding:8px 16px;font-size:9px}
+.pv .footbar .fl{font-weight:900;letter-spacing:4px;font-size:11px}
+.pv .footbar .fl .y{color:var(--yellow)}
+/* ================= print ================= */
+@page{size:A4;margin:15mm 14mm}
+@media print{
+  body{background:#fff}
+  .appbar,.editor{display:none!important}
+  .wrap,.stage{display:block;padding:0}
+  .sheet{width:auto;min-height:0;box-shadow:none;padding:0}
+  .pv,.pv *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+
+<div class="appbar">
+  <div class="lg">OVER <span class="y">DOOR</span></div>
+  <div class="sub">求人票メーカー ― 他社フォーマットの求人票をOVERDOOR仕様に</div>
+  <div class="spacer"></div>
+  <button class="btn btn-ghost" onclick="resetAll()">新規作成</button>
+  <button class="btn btn-print" onclick="window.print()">🖨 印刷 / PDF保存</button>
+</div>
+
+<div class="wrap">
+<!-- ===================== EDITOR ===================== -->
+<div class="editor" id="editor">
+  <label class="drop" id="drop">
+    📄 求人票PDFをここにドラッグ&ドロップ（クリックで選択）
+    <small>circus等のPDFを自動で読み取ってフォームに振り分けます</small>
+    <input type="file" id="file" accept="application/pdf">
+  </label>
+  <details class="paste">
+    <summary>テキスト貼り付けで読み込む場合はこちら</summary>
+    <textarea class="pastebox" id="pastebox" placeholder="求人票の全文テキストを貼り付け"></textarea>
+    <button class="mini" style="margin-top:4px" onclick="parseFromPaste()">解析してフォームへ</button>
+  </details>
+  <div class="parse-note" id="parsenote"></div>
+  <div class="hint">⚠ 自動解析は下書きです。<b>必ず右のプレビューを確認して修正</b>してください。他社エージェント（紹介事業者）の情報は自動で削除され、発行者はOVERDOOR固定です。</div>
+
+  <div class="ed-h">基本情報</div>
+  <div class="f"><label>会社名</label><input id="company" oninput="upd()"></div>
+  <div class="f"><label>ポジション名（タイトル）</label><input id="title" oninput="upd()"></div>
+  <div class="f"><label>キャッチコピー（任意・タイトル下に小さく表示）</label><input id="catch" oninput="upd()"></div>
+  <div class="grid2" id="basicgrid"></div>
+
+  <div class="ed-h">想定年収</div>
+  <div class="f"><label>金額（例：700万円〜1,000万円）</label><input id="salv" oninput="upd()"></div>
+  <div class="f"><label>補足（例：月給：50万円〜80万円）</label><input id="sals" oninput="upd()"></div>
+
+  <div class="ed-h">どのような人を求めているか</div>
+  <div class="f"><label>左カード見出し</label><input id="clt" value="必要条件" oninput="upd()"></div>
+  <div class="f"><label>左カード本文</label><textarea id="cl" oninput="upd()"></textarea></div>
+  <div class="f"><label>右カード見出し</label><input id="crt" value="内定の可能性が高い人" oninput="upd()"></div>
+  <div class="f"><label>右カード本文</label><textarea id="cr" oninput="upd()"></textarea></div>
+
+  <div class="ed-h">セクション</div>
+  <div id="secs"></div>
+  <div class="addbar"><button class="mini" onclick="addSection()">＋ セクションを追加</button></div>
+  <div class="hint">発行者セクション（株式会社OVER DOOR／有料職業紹介許可番号 23-ユ-302895）と免責3行は自動で末尾に入ります。</div>
+</div>
+
+<!-- ===================== PREVIEW ===================== -->
+<div class="stage"><div class="sheet"><div class="pv" id="pv"></div></div></div>
+</div>
+
+<script>
+/* ============ state ============ */
+const BASIC_KEYS_L = ["業種","職種","設立年","従業員数","上場区分","勤務地"];
+const BASIC_KEYS_R = ["雇用形態","採用ポジション","職位","最終学歴","職種経験","業種経験"];
+const DEFAULT_SECTIONS = () => ([
+  {heading:"求人概要", rows:[["事業内容と今後の事業展開",""],["募集背景",""],["PRポイント",""],["この求人の魅力",""],["仕事内容",""],["現在の組織構成",""],["給与・年収例",""],["勤務地・勤務時間",""],["休日休暇・受動喫煙対策・福利厚生",""]]},
+  {heading:"選考情報", rows:[["選考に関して",""],["選考フロー",""],["補足情報",""]]},
+  {heading:"会社情報", rows:[["会社名",""],["会社HP",""],["本社所在地",""],["業種",""],["設立年",""],["従業員数",""],["上場区分",""],["平均年齢",""],["男女比率",""]]},
+]);
+let state = { basic:{}, sections: DEFAULT_SECTIONS() };
+
+/* ============ helpers ============ */
+const $ = id => document.getElementById(id);
+const esc = s => (s||"").replace(/[&<>]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+const nl2br = s => esc(s).replace(/\n/g,"<br>");
+const norm = s => (s||"").replace(/[⺀-⿟]/g, c=>c.normalize("NFKC")).replace(/\r/g,"");
+
+/* ============ editor build ============ */
+function buildBasicGrid(){
+  const g = $("basicgrid"); g.innerHTML = "";
+  [...BASIC_KEYS_L, ...BASIC_KEYS_R].forEach(k=>{
+    const d = document.createElement("div"); d.className="f";
+    d.innerHTML = `<label>${k}</label><input data-bk="${k}" oninput="state.basic['${k}']=this.value;upd()">`;
+    g.appendChild(d);
+  });
+}
+function syncBasicGrid(){
+  document.querySelectorAll("[data-bk]").forEach(inp=>{ inp.value = state.basic[inp.dataset.bk]||""; });
+}
+function buildSections(){
+  const box = $("secs"); box.innerHTML = "";
+  state.sections.forEach((sec,si)=>{
+    const d = document.createElement("div"); d.className="sec-ed";
+    d.innerHTML = `<div class="shead">
+        <input value="${esc(sec.heading)}" oninput="state.sections[${si}].heading=this.value;upd()">
+        <button class="mini del" onclick="delSection(${si})">削除</button></div>`;
+    sec.rows.forEach((r,ri)=>{
+      const rd = document.createElement("div"); rd.className="rowitem";
+      rd.innerHTML = `<div class="rhead">
+          <input value="${esc(r[0])}" placeholder="項目名" oninput="state.sections[${si}].rows[${ri}][0]=this.value;upd()">
+          <button class="mini del" onclick="delRow(${si},${ri})">×</button></div>`;
+      const ta = document.createElement("textarea");
+      ta.value = r[1]; ta.placeholder="内容（空欄の行は出力されません）";
+      ta.oninput = ()=>{ state.sections[si].rows[ri][1]=ta.value; upd(); };
+      rd.appendChild(ta); d.appendChild(rd);
+    });
+    const ab = document.createElement("div");
+    ab.innerHTML = `<button class="mini" onclick="addRow(${si})">＋ 行を追加</button>`;
+    d.appendChild(ab); box.appendChild(d);
+  });
+}
+function addRow(si){ state.sections[si].rows.push(["",""]); buildSections(); upd(); }
+function delRow(si,ri){ state.sections[si].rows.splice(ri,1); buildSections(); upd(); }
+function addSection(){ state.sections.push({heading:"新しいセクション", rows:[["",""]]}); buildSections(); upd(); }
+function delSection(si){ state.sections.splice(si,1); buildSections(); upd(); }
+function resetAll(){
+  if(!confirm("入力内容をすべてクリアします。よろしいですか？")) return;
+  state = { basic:{}, sections: DEFAULT_SECTIONS() };
+  ["company","title","catch","salv","sals","cl","cr","pastebox"].forEach(id=>$(id).value="");
+  $("clt").value="必要条件"; $("crt").value="内定の可能性が高い人";
+  $("parsenote").style.display="none";
+  syncBasicGrid(); buildSections(); upd();
+}
+
+/* ============ preview ============ */
+function upd(){
+  const b = state.basic;
+  const bl = BASIC_KEYS_L.filter(k=>b[k]), br = BASIC_KEYS_R.filter(k=>b[k]);
+  const n = Math.max(bl.length, br.length);
+  let basicRows = "";
+  for(let i=0;i<n;i++){
+    basicRows += "<tr>";
+    [[bl,i],[br,i]].forEach(([col,idx])=>{
+      if(idx<col.length){ const k=col[idx]; basicRows += `<th>${esc(k)}</th><td>${nl2br(b[k])}</td>`; }
+      else basicRows += `<th style="background:#fff"></th><td></td>`;
+    });
+    basicRows += "</tr>";
+  }
+  const salv = $("salv").value.trim(), sals = $("sals").value.trim();
+  const salary = salv ? `<div class="salary"><span class="pill">想定年収</span><span class="sal-main">${esc(salv)}</span>${sals?`<span class="sal-sub">${esc(sals)}</span>`:""}</div>` : "";
+  const cl=$("cl").value.trim(), cr=$("cr").value.trim();
+  const cards = (cl||cr) ? `<div class="section"><div class="sec-head">どのような人を求めているか</div>
+    <div class="cards">
+      <div class="card tc"><div class="card-head">${esc($("clt").value||"必要条件")}</div><div class="card-body">${nl2br(cl)}</div></div>
+      <div class="card yc"><div class="card-head">${esc($("crt").value||"内定の可能性が高い人")}</div><div class="card-body">${nl2br(cr)}</div></div>
+    </div></div>` : "";
+  let secs = "";
+  state.sections.forEach(sec=>{
+    const rows = sec.rows.filter(r=>r[0].trim()&&r[1].trim());
+    if(!rows.length) return;
+    secs += `<div class="section"><div class="sec-head">${esc(sec.heading)}</div>
+      <table class="def"><colgroup><col style="width:17%"><col></colgroup>
+      ${rows.map(r=>`<tr><th>${esc(r[0])}</th><td>${nl2br(r[1])}</td></tr>`).join("")}</table></div>`;
+  });
+  secs += `<div class="section"><div class="sec-head">発行者</div>
+    <table class="def"><colgroup><col style="width:17%"><col></colgroup>
+    <tr><th>事業者名</th><td>株式会社OVER DOOR</td></tr>
+    <tr><th>有料職業紹介許可番号</th><td>23-ユ-302895</td></tr></table></div>`;
+  $("pv").innerHTML = `
+    <div class="header"><div class="logo"><div class="mark"><span class="sq t"></span><span class="sq y"></span></div>
+      <div><div class="wm">OVER DOOR</div><div class="tag">“働く”の可能性を、もっと楽しく</div></div></div>
+      <div class="jd">JOB DESCRIPTION</div></div>
+    <div class="company">${esc($("company").value)||"（会社名）"}</div>
+    <h1>${esc($("title").value)||"（ポジション名）"}</h1>
+    ${$("catch").value.trim()?`<div class="catch">${esc($("catch").value)}</div>`:""}
+    ${basicRows?`<table class="basic">${basicRows}</table>`:""}
+    ${salary}${cards}${secs}
+    <div class="disclaimer">
+      <div>※応募意思を頂いた段階で、求人企業へ特定個人情報の開示がされますことも、予めご了承ください。</div>
+      <div>・本求人票に記載されている労働条件等の情報は、労働契約締結時の労働条件と異なる場合がありますので、ご相談いただけますと幸いです。</div>
+      <div>・本求人票には一般には公開されていない情報も含まれておりますので、第三者への提供・転送を禁止させて頂いております。</div>
+    </div>
+    <div class="footbar"><div class="fl">OVER <span class="y">DOOR</span></div>
+      <div>“働く”の可能性を、もっと楽しく　｜　株式会社OVER DOOR（有料職業紹介許可番号 23-ユ-302895）</div></div>`;
+  document.title = ($("company").value&&$("title").value) ? `OVERDOOR求人票_${$("company").value}_${$("title").value}` : "OVERDOOR 求人票メーカー";
+}
+
+/* ============ parser ============ */
+const ALL_KEYS = [...BASIC_KEYS_L,...BASIC_KEYS_R,"想定年収","月給"];
+const JQ_LABELS = ["事業内容と今後の事業展開","募集背景","PRポイント","この求人の魅力","仕事内容","現在の組織構成","給与・年収例","勤務地・勤務時間","休日休暇・受動喫煙対策・福利厚生"];
+const CO_LABELS = ["会社名","会社HP","本社所在地","業種","設立年","従業員数","上場区分","平均年齢","男女比率"];
+const AGENT_MARKERS = ["求人提供元","有料職業紹介事業者について"];
+
+function splitByLabels(text, labels){
+  // 位置順に label を探して {label: 本文} に分割
+  const found = [];
+  labels.forEach(l=>{
+    const re = new RegExp("(^|\\n)\\s*"+l.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"\\s*(\\n|：|:)?");
+    const m = re.exec(text);
+    if(m) found.push({label:l, idx:m.index, skip:m[0].length});
+  });
+  found.sort((a,b)=>a.idx-b.idx);
+  const out = [];
+  found.forEach((f,i)=>{
+    const end = i+1<found.length ? found[i+1].idx : text.length;
+    out.push([f.label, text.slice(f.idx+f.skip, end).trim()]);
+  });
+  return out;
+}
+
+function parseText(raw){
+  let text = norm(raw);
+  // 他社エージェントセクション以降を破棄
+  for(const mk of AGENT_MARKERS){
+    const i = text.indexOf(mk);
+    if(i>=0){ text = text.slice(0,i); break; }
+  }
+  const notes = [];
+  // --- 会社名・キャッチ ---
+  const lines = text.split("\n").map(s=>s.trim()).filter(Boolean);
+  let compIdx = -1;
+  for(let i=0;i<Math.min(lines.length,12);i++){
+    if(/^(株式会社|合同会社|有限会社)/.test(lines[i]) || (/(株式会社|Inc\.|inc\.)$/.test(lines[i]) && lines[i].length<=40)){ compIdx=i; break; }
+  }
+  if(compIdx>=0){
+    $("company").value = lines[compIdx];
+    const catchTxt = lines.slice(0,compIdx).join("").trim();
+    if(catchTxt){ $("catch").value = catchTxt;
+      const m = catchTxt.match(/【(.+?)】/); $("title").value = m?m[1]:""; }
+  } else notes.push("会社名を特定できませんでした。手入力してください。");
+  // --- ヘッダー部 key:value ---
+  const headEnd = (()=>{ const i=text.indexOf("どのような人を求めているか"); return i>=0?i:Math.min(text.length,1500); })();
+  const headZone = text.slice(0,headEnd);
+  const kvRe = new RegExp("("+ALL_KEYS.join("|")+")[：:]\\s*","g");
+  const hits=[]; let m;
+  while((m=kvRe.exec(headZone))!==null) hits.push({k:m[1], s:m.index, e:kvRe.lastIndex});
+  hits.forEach((h,i)=>{
+    const end = i+1<hits.length ? hits[i+1].s : headZone.length;
+    const v = headZone.slice(h.e,end).replace(/\n/g," ").replace(/\s+/g," ").trim();
+    if(!v) return;
+    if(h.k==="想定年収") $("salv").value = v;
+    else if(h.k==="月給") $("sals").value = "月給：" + v;
+    else if(!state.basic[h.k]) state.basic[h.k] = v;
+  });
+  // --- 2カード ---
+  const cardStart = text.indexOf("どのような人を求めているか");
+  const jqStart = text.indexOf("求人概要", cardStart>=0?cardStart:0);
+  if(cardStart>=0 && jqStart>cardStart){
+    let body = text.slice(cardStart+"どのような人を求めているか".length, jqStart);
+    body = body.replace(/必要条件\s*内定の可能性が高い人/,"").replace(/^\s*必要条件\s*/,"").trim();
+    const splitRe = /(＜歓迎|【歓迎|▼歓迎|歓迎要件|歓迎スキル|【求める人物像】|▼求める人物像|＜求める人物像)/;
+    const sm = splitRe.exec(body);
+    if(sm){ $("cl").value = body.slice(0,sm.index).trim(); $("cr").value = body.slice(sm.index).trim(); }
+    else { $("cl").value = body.trim(); notes.push("「内定の可能性が高い人」を分離できなかったため左カードにまとめています。"); }
+  }
+  // --- 求人概要 ---
+  const selStart = text.indexOf("選考情報", jqStart>=0?jqStart:0);
+  const coStart = text.indexOf("会社情報", selStart>=0?selStart:(jqStart>=0?jqStart:0));
+  if(jqStart>=0){
+    const jqEnd = selStart>=0?selStart:(coStart>=0?coStart:text.length);
+    const rows = splitByLabels(text.slice(jqStart+4, jqEnd), JQ_LABELS);
+    if(rows.length) state.sections[0].rows = rows;
+  }
+  // --- 選考情報 ---
+  if(selStart>=0){
+    const selEnd = coStart>=0?coStart:text.length;
+    let body = text.slice(selStart+4, selEnd).replace(/^\s*選考情報\s*/,"");
+    const parts = [...body.matchAll(/〈(.+?)〉/g)];
+    const rows=[];
+    if(parts.length){
+      parts.forEach((p,i)=>{
+        const end = i+1<parts.length?parts[i+1].index:body.length;
+        rows.push([p[1].replace("に関して","に関して"), body.slice(p.index+p[0].length,end).trim()]);
+      });
+    } else if(body.trim()) rows.push(["選考について", body.trim()]);
+    if(rows.length) state.sections[1].rows = rows;
+  }
+  // --- 会社情報 ---
+  if(coStart>=0){
+    const rows = splitByLabels(text.slice(coStart+4), CO_LABELS)
+      .map(r=>[r[0], r[1].replace(/\n+/g,"\n").trim()]).filter(r=>r[1]);
+    if(rows.length) state.sections[2].rows = rows;
+  }
+  syncBasicGrid(); buildSections(); upd();
+  $("parsenote").style.display = "block";
+  $("parsenote").innerHTML = "✅ 解析しました。プレビューを確認し、ズレている箇所はフォームで修正してください。"
+    + (notes.length?("<br>・"+notes.join("<br>・")):"");
+}
+
+function parseFromPaste(){
+  const t = $("pastebox").value;
+  if(!t.trim()){ alert("テキストを貼り付けてください"); return; }
+  parseText(t);
+}
+
+/* ============ PDF loading ============ */
+async function loadPdf(file){
+  if(!window.pdfjsLib){ alert("PDF読み取りライブラリを読み込めませんでした（オフライン？）。テキスト貼り付けをご利用ください。"); return; }
+  pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+  try{
+    const buf = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({data:buf}).promise;
+    let all = [];
+    for(let p=1;p<=pdf.numPages;p++){
+      const page = await pdf.getPage(p);
+      const tc = await page.getTextContent();
+      // y座標で行を再構成
+      const linesMap = new Map();
+      tc.items.forEach(it=>{
+        if(!it.str) return;
+        const y = Math.round(it.transform[5]/3)*3;
+        if(!linesMap.has(y)) linesMap.set(y,[]);
+        linesMap.get(y).push({x:it.transform[4], s:it.str});
+      });
+      const ys = [...linesMap.keys()].sort((a,b)=>b-a);
+      ys.forEach(y=>{
+        const parts = linesMap.get(y).sort((a,b)=>a.x-b.x).map(o=>o.s);
+        all.push(parts.join(" ").replace(/\s{2,}/g," ").trim());
+      });
+      all.push("");
+    }
+    parseText(all.join("\n"));
+  }catch(e){
+    alert("PDFを読み取れませんでした: "+e.message+"\nテキスト貼り付けをお試しください。");
+  }
+}
+const drop = $("drop");
+drop.addEventListener("dragover",e=>{e.preventDefault();drop.classList.add("on")});
+drop.addEventListener("dragleave",()=>drop.classList.remove("on"));
+drop.addEventListener("drop",e=>{e.preventDefault();drop.classList.remove("on");
+  const f=e.dataTransfer.files[0]; if(f) loadPdf(f);});
+$("file").addEventListener("change",e=>{ if(e.target.files[0]) loadPdf(e.target.files[0]); });
+
+/* ============ init ============ */
+buildBasicGrid(); buildSections(); upd();
+</script>
+</body>
+</html>
