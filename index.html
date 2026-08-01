@@ -277,11 +277,12 @@ const JQ_LABELS = ["事業内容と今後の事業展開","募集背景","PRポ�
 const CO_LABELS = ["会社名","会社HP","本社所在地","業種","設立年","従業員数","上場区分","平均年齢","男女比率"];
 const AGENT_MARKERS = ["求人提供元","有料職業紹介事業者について"];
 
-function splitByLabels(text, labels){
-  // 位置順に label を探して {label: 本文} に分割
+function splitByLabels(text, labels, loose){
+  // 位置順に label を探して {label: 本文} に分割。loose=true なら行中のラベルも許可
   const found = [];
   labels.forEach(l=>{
-    const re = new RegExp("(^|\\n)\\s*"+l.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"\\s*(\\n|：|:)?");
+    const boundary = loose ? "(^|\\n|\\s)" : "(^|\\n)";
+    const re = new RegExp(boundary+"\\s*"+l.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"\\s*(\\n|：|:| )?");
     const m = re.exec(text);
     if(m) found.push({label:l, idx:m.index, skip:m[0].length});
   });
@@ -294,13 +295,108 @@ function splitByLabels(text, labels){
   return out;
 }
 
-function parseText(raw){
+function cleanupText(raw){
   let text = norm(raw);
+  // システム出力のヘッダー/フッター行・免責行を除去
+  text = text.split("\n").filter(l=>{
+    const t = l.trim();
+    if(/^ページ番号\s*[：:]/.test(t)) return false;
+    if(/^求人id\s*[：:]/i.test(t)) return false;
+    if(/^発行者\s*[：:]/.test(t)) return false;
+    if(/^出力日\s*[：:]/.test(t)) return false;
+    if(/^[・･]?本求人票(で明示|に記載)/.test(t)) return false;
+    if(/^[・･]?本資料には/.test(t)) return false;
+    return true;
+  }).join("\n");
   // 他社エージェントセクション以降を破棄
   for(const mk of AGENT_MARKERS){
     const i = text.indexOf(mk);
     if(i>=0){ text = text.slice(0,i); break; }
   }
+  return text;
+}
+
+function parseText(raw){
+  const text = cleanupText(raw);
+  // フォーマット判定: 「求人情報」システム出力形式 or circus形式
+  const head = text.trim().slice(0,60);
+  const isExport = /^求人情報/.test(head.trim()) || (text.includes("企業概要") && text.includes("求人内容"));
+  if(isExport) parseExport(text); else parseCircus(text);
+  // フォールバック: ほぼ何も取れなかった場合は全文を1行に流し込む
+  const gotRows = state.sections.some(s=>s.rows.some(r=>r[0].trim()&&r[1].trim()));
+  if(!gotRows && !$("cl").value.trim()){
+    state.sections[0].rows = [["求人内容（全文・要整理）", text.trim()]];
+    buildSections(); upd();
+    $("parsenote").style.display = "block";
+    $("parsenote").innerHTML = "⚠ 自動振り分けできない形式だったため、全文を「求人概要」に入れました。フォーム上で項目に切り分けてください。";
+  }
+}
+
+/* --- 形式B: 「求人情報」システム出力形式（SmartHR・ユーザベース等） --- */
+const EXPORT_LABELS = ["仕事内容","求人概要","業務内容","対象となる方","求める人物像","募集背景","やりがい","ポジションの魅力","働き方","カルチャー","勤務地","勤務条件","休日・休暇","福利厚生・保険","参考資料"];
+function parseExport(text){
+  const notes = [];
+  let body = text.replace(/^\s*求人情報\s*\n/, "");
+  // 会社名＋タイトル（先頭行）
+  const lines = body.split("\n").map(s=>s.trim()).filter(Boolean);
+  if(lines.length){
+    const m = lines[0].match(/^(\S*(?:株式会社|合同会社|有限会社)\S*)\s+(.+)$/);
+    if(m){ $("company").value = m[1]; $("title").value = m[2]; }
+    else if(/(株式会社|合同会社|有限会社)/.test(lines[0])){
+      $("company").value = lines[0];
+      if(lines[1] && lines[1].length<60 && !/^(求人内容|仕事内容)/.test(lines[1])) $("title").value = lines[1];
+    } else notes.push("会社名を特定できませんでした。手入力してください。");
+  }
+  // セクション見出しで分割
+  const selIdx = body.indexOf("選考情報");
+  const coIdx = body.indexOf("企業概要");
+  const mainEnd = Math.min(...[selIdx,coIdx,body.length].filter(i=>i>=0));
+  let rows = splitByLabels(body.slice(0,mainEnd), EXPORT_LABELS);
+  // 対象となる方 → 2カード
+  const targetIdx = rows.findIndex(r=>r[0]==="対象となる方");
+  if(targetIdx>=0){
+    const t = rows[targetIdx][1];
+    const sp = /(応募資格（歓迎）|歓迎条件|【歓迎】|＜歓迎|歓迎スキル|応募資格\(歓迎\))/.exec(t);
+    if(sp){ $("cl").value = t.slice(0,sp.index).trim(); $("cr").value = t.slice(sp.index).trim(); }
+    else $("cl").value = t.trim();
+    $("clt").value = "必要条件"; $("crt").value = "歓迎条件・求める人物像";
+    rows.splice(targetIdx,1);
+  }
+  // 勤務条件から年収・雇用形態を抽出
+  const jk = rows.find(r=>r[0]==="勤務条件");
+  const jkText = jk ? jk[1] : body;
+  let sm = jkText.match(/年収の目安\s*[：:]?\s*([^\n]+)/) || body.match(/年収の目安\s*[：:]?\s*([^\n]+)/);
+  if(sm) $("salv").value = sm[1].trim();
+  const em = body.match(/雇用形態\s*[：:]?\s*(正社員|契約社員|業務委託|派遣社員|パート・アルバイト)/);
+  if(em) state.basic["雇用形態"] = em[1];
+  if(rows.length) state.sections[0].rows = rows;
+  // 選考情報
+  if(selIdx>=0){
+    const selEnd = coIdx>selIdx ? coIdx : body.length;
+    const selBody = body.slice(selIdx+4, selEnd).trim();
+    if(selBody) state.sections[1].rows = [["選考フロー", selBody]];
+  }
+  // 企業概要 → 会社情報
+  if(coIdx>=0){
+    const coRows = splitByLabels(body.slice(coIdx+4), ["企業名","業種","本社所在地","設立","従業員数"], true)
+      .map(r=>[r[0], r[1].replace(/\n+/g,"\n").trim()]).filter(r=>r[1]);
+    if(coRows.length){
+      state.sections[2].rows = coRows;
+      coRows.forEach(([k,v])=>{
+        if(k==="業種") state.basic["業種"] = state.basic["業種"]||v;
+        if(k==="設立") state.basic["設立年"] = state.basic["設立年"]||v;
+        if(k==="従業員数") state.basic["従業員数"] = state.basic["従業員数"]||v;
+      });
+    }
+  }
+  syncBasicGrid(); buildSections(); upd();
+  $("parsenote").style.display = "block";
+  $("parsenote").innerHTML = "✅ 解析しました（求人情報出力形式）。プレビューを確認し、ズレている箇所はフォームで修正してください。"
+    + (notes.length?("<br>・"+notes.join("<br>・")):"");
+}
+
+/* --- 形式A: circus等のエージェント形式 --- */
+function parseCircus(text){
   const notes = [];
   // --- 会社名・キャッチ ---
   const lines = text.split("\n").map(s=>s.trim()).filter(Boolean);
@@ -399,9 +495,17 @@ async function loadPdf(file){
         linesMap.get(y).push({x:it.transform[4], s:it.str});
       });
       const ys = [...linesMap.keys()].sort((a,b)=>b-a);
+      const CJK = /[　-ヿ一-鿿豈-﫿！-｠]/;
       ys.forEach(y=>{
-        const parts = linesMap.get(y).sort((a,b)=>a.x-b.x).map(o=>o.s);
-        all.push(parts.join(" ").replace(/\s{2,}/g," ").trim());
+        const parts = linesMap.get(y).sort((a,b)=>a.x-b.x).map(o=>o.s).filter(s=>s.trim()!=="" || s===" ");
+        let line = "";
+        parts.forEach(s=>{
+          if(!line){ line = s; return; }
+          const a = line[line.length-1], b = s[0];
+          // 日本語文字同士はスペースを入れずに連結（PDF抽出の不要スペース対策）
+          line += (CJK.test(a) && CJK.test(b)) ? s : (" " + s);
+        });
+        all.push(line.replace(/\s{2,}/g," ").trim());
       });
       all.push("");
     }
