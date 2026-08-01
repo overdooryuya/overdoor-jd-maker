@@ -51,6 +51,12 @@ textarea.pastebox{width:100%;height:110px;margin-top:6px;font-size:11px;border:1
 .sec-ed>.shead{display:flex;gap:6px;margin-bottom:8px}
 .sec-ed>.shead input{flex:1;font-weight:900;font-size:13px;border:1px solid var(--border);border-radius:5px;padding:5px 8px}
 .hint{font-size:11px;color:#5c7681;line-height:1.7;margin-top:6px}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0}
+.tabc{display:flex;align-items:center;gap:6px;border:1.5px solid var(--border);border-radius:20px;padding:4px 8px 4px 14px;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:#41626e;max-width:200px}
+.tabc .tl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tabc.on{border-color:var(--teal);background:var(--teal);color:#fff}
+.tabc .tx{border:none;background:rgba(0,0,0,.08);border-radius:50%;width:16px;height:16px;line-height:14px;font-size:11px;cursor:pointer;color:inherit;flex:none}
+.tabc.on .tx{background:rgba(255,255,255,.25)}
 /* ================= preview (OVERDOOR design) ================= */
 .pv{font-size:10.5px;line-height:1.75;color:var(--dark)}
 .pv .header{display:flex;justify-content:space-between;align-items:center;padding-bottom:12px;border-bottom:3px solid var(--teal);margin-bottom:20px}
@@ -116,10 +122,11 @@ textarea.pastebox{width:100%;height:110px;margin-top:6px;font-size:11px;border:1
 <!-- ===================== EDITOR ===================== -->
 <div class="editor" id="editor">
   <label class="drop" id="drop">
-    📄 求人票PDFをここにドラッグ&ドロップ（クリックで選択）
-    <small>circus等のPDFを自動で読み取ってフォームに振り分けます</small>
-    <input type="file" id="file" accept="application/pdf">
+    📄 求人票PDFをここにドラッグ&ドロップ（複数可・クリックで選択）
+    <small>circus等のPDFを自動で読み取ってフォームに振り分けます。複数ドロップするとタブに分かれます</small>
+    <input type="file" id="file" accept="application/pdf" multiple>
   </label>
+  <div class="tabs" id="tabs"></div>
   <details class="paste">
     <summary>テキスト貼り付けで読み込む場合はこちら</summary>
     <textarea class="pastebox" id="pastebox" placeholder="求人票の全文テキストを貼り付け"></textarea>
@@ -209,14 +216,60 @@ function addRow(si){ state.sections[si].rows.push(["",""]); buildSections(); upd
 function delRow(si,ri){ state.sections[si].rows.splice(ri,1); buildSections(); upd(); }
 function addSection(){ state.sections.push({heading:"新しいセクション", rows:[["",""]]}); buildSections(); upd(); }
 function delSection(si){ state.sections.splice(si,1); buildSections(); upd(); }
-function resetAll(){
-  if(!confirm("入力内容をすべてクリアします。よろしいですか？")) return;
-  state = { basic:{}, sections: DEFAULT_SECTIONS() };
-  ["company","title","catch","salv","sals","cl","cr","pastebox"].forEach(id=>$(id).value="");
-  $("clt").value="必要条件"; $("crt").value="内定の可能性が高い人";
-  $("parsenote").style.display="none";
+
+/* ============ 複数求人票（タブ） ============ */
+let jobs = [], active = -1;
+function blankJob(){
+  return {company:"",title:"",catch:"",salv:"",sals:"",
+    clt:"必要条件",cl:"",crt:"内定の可能性が高い人",cr:"",
+    basic:{}, sections: DEFAULT_SECTIONS()};
+}
+function collect(){
+  return {company:$("company").value, title:$("title").value, catch:$("catch").value,
+    salv:$("salv").value, sals:$("sals").value,
+    clt:$("clt").value, cl:$("cl").value, crt:$("crt").value, cr:$("cr").value,
+    basic:{...state.basic}, sections: JSON.parse(JSON.stringify(state.sections))};
+}
+function applyJob(d){
+  ["company","title","catch","salv","sals","clt","cl","crt","cr"].forEach(k=>{ $(k).value = d[k]||""; });
+  state.basic = {...(d.basic||{})};
+  state.sections = d.sections ? JSON.parse(JSON.stringify(d.sections)) : DEFAULT_SECTIONS();
   syncBasicGrid(); buildSections(); upd();
 }
+function jobIsEmpty(d){
+  return !d.company && !d.title && !d.cl && !d.cr && !Object.keys(d.basic||{}).length
+    && !(d.sections||[]).some(s=>s.rows.some(r=>r[1] && r[1].trim()));
+}
+function saveActive(){ if(active>=0 && jobs[active]) jobs[active] = collect(); }
+function switchTo(i){
+  if(i===active) return;
+  saveActive(); active = i; $("parsenote").style.display="none";
+  applyJob(jobs[i]);
+}
+function closeJob(i, ev){
+  if(ev) ev.stopPropagation();
+  if(!confirm("このタブを閉じます。よろしいですか？")) return;
+  jobs.splice(i,1);
+  if(!jobs.length){ jobs=[blankJob()]; active=0; }
+  else if(active>=i){ active = Math.max(0, active-1); }
+  applyJob(jobs[active]);
+}
+function addNewJob(){
+  saveActive(); jobs.push(blankJob()); active = jobs.length-1;
+  $("parsenote").style.display="none";
+  applyJob(jobs[active]);
+}
+function renderTabs(){
+  const box = $("tabs"); if(!box) return;
+  if(jobs.length<=1){ box.innerHTML=""; return; }
+  box.innerHTML = jobs.map((j,i)=>{
+    const label = (i===active ? ($("company").value||$("title").value) : (j.company||j.title)) || `求人${i+1}`;
+    return `<div class="tabc ${i===active?"on":""}" onclick="switchTo(${i})">
+      <span class="tl">${esc(label)}</span>
+      <button class="tx" onclick="closeJob(${i},event)">×</button></div>`;
+  }).join("");
+}
+function resetAll(){ addNewJob(); }
 
 /* ============ preview ============ */
 function upd(){
@@ -269,6 +322,7 @@ function upd(){
     <div class="footbar"><div class="fl">OVER <span class="y">DOOR</span></div>
       <div>“働く”の可能性を、もっと楽しく　｜　株式会社OVER DOOR（有料職業紹介許可番号 23-ユ-302895）</div></div>`;
   document.title = ($("company").value&&$("title").value) ? `OVERDOOR求人票_${$("company").value}_${$("title").value}` : "OVERDOOR 求人票メーカー";
+  renderTabs();
 }
 
 /* ============ parser ============ */
@@ -476,9 +530,34 @@ function parseFromPaste(){
 }
 
 /* ============ PDF loading ============ */
-async function loadPdf(file){
-  if(!window.pdfjsLib){ alert("PDF読み取りライブラリを読み込めませんでした（オフライン？）。テキスト貼り付けをご利用ください。"); return; }
-  pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+async function loadPdfs(fileList){
+  const files = [...fileList].filter(f=>f.type==="application/pdf" || /\.pdf$/i.test(f.name));
+  if(!files.length){ alert("PDFファイルをドロップしてください"); return; }
+  saveActive();
+  // 未入力の初期タブは置き換える
+  const startEmpty = jobs.length===1 && active===0 && jobIsEmpty(collect());
+  let firstNew = -1; const failed = [];
+  for(const f of files){
+    const text = await extractPdfText(f);
+    if(text===null){ failed.push(f.name); continue; }
+    if(startEmpty && firstNew<0){ active = 0; }
+    else { jobs.push(blankJob()); active = jobs.length-1; }
+    applyJob(jobs[active]);
+    parseText(text);
+    jobs[active] = collect();
+    if(firstNew<0) firstNew = active;
+  }
+  if(firstNew>=0){ active = firstNew; applyJob(jobs[active]); }
+  if(files.length>1){
+    $("parsenote").style.display = "block";
+    $("parsenote").innerHTML = `✅ ${files.length - failed.length}件のPDFを読み込みました。上部のタブで切り替えて、それぞれ確認・修正・印刷してください（印刷は表示中のタブが対象）。`
+      + (failed.length?`<br>⚠ 読み取れなかったファイル: ${failed.join(", ")}`:"");
+  }
+}
+async function extractPdfText(file){
+  if(!window.pdfjsLib){ alert("PDF読み取りライブラリを読み込めませんでした（オフライン？）。テキスト貼り付けをご利用ください。"); return null; }
+  if(!pdfjsLib.GlobalWorkerOptions.workerSrc)
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
   try{
     const buf = await file.arrayBuffer();
     const pdf = await pdfjsLib.getDocument({data:buf}).promise;
@@ -509,20 +588,21 @@ async function loadPdf(file){
       });
       all.push("");
     }
-    parseText(all.join("\n"));
+    return all.join("\n");
   }catch(e){
-    alert("PDFを読み取れませんでした: "+e.message+"\nテキスト貼り付けをお試しください。");
+    console.error("PDF読み取り失敗", file.name, e);
+    return null;
   }
 }
 const drop = $("drop");
 drop.addEventListener("dragover",e=>{e.preventDefault();drop.classList.add("on")});
 drop.addEventListener("dragleave",()=>drop.classList.remove("on"));
 drop.addEventListener("drop",e=>{e.preventDefault();drop.classList.remove("on");
-  const f=e.dataTransfer.files[0]; if(f) loadPdf(f);});
-$("file").addEventListener("change",e=>{ if(e.target.files[0]) loadPdf(e.target.files[0]); });
+  if(e.dataTransfer.files.length) loadPdfs(e.dataTransfer.files);});
+$("file").addEventListener("change",e=>{ if(e.target.files.length) loadPdfs(e.target.files); e.target.value=""; });
 
 /* ============ init ============ */
-buildBasicGrid(); buildSections(); upd();
+buildBasicGrid(); jobs=[blankJob()]; active=0; buildSections(); upd();
 </script>
 </body>
 </html>
