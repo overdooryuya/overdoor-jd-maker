@@ -117,6 +117,7 @@ textarea.pastebox{width:100%;height:110px;margin-top:6px;font-size:11px;border:1
   <div class="sub">求人票メーカー ― 他社フォーマットの求人票をOVERDOOR仕様に</div>
   <div class="spacer"></div>
   <button class="btn btn-ghost" onclick="resetAll()">新規作成</button>
+  <button class="btn btn-ghost" id="pubbtn" onclick="publishJob()" title="表示中の求人票を候補者向けWebページとして公開し、送付用URLを発行します">🌐 候補者用URL発行</button>
   <button class="btn btn-ghost" id="zipbtn" onclick="zipAll()" title="全タブを1社1ファイルのPDFにしてzipでダウンロードします">📦 zipで一括保存</button>
   <button class="btn btn-ghost" onclick="printAll()" title="全タブを1つのPDFに連結して印刷します">🖨 まとめて印刷</button>
   <button class="btn btn-print" onclick="window.print()">🖨 印刷 / PDF保存</button>
@@ -352,6 +353,101 @@ function printAll(){
   window.addEventListener("afterprint", restore);
   window.print();
   setTimeout(restore, 1500); // afterprintが発火しないブラウザ向けフォールバック
+}
+/* ============ 候補者用URL発行（GitHub Pagesへ公開） ============ */
+const GH_REPO = "overdooryuya/overdoor-jd-maker", GH_BRANCH = "main";
+const SITE_BASE = "https://overdooryuya.github.io/overdoor-jd-maker/";
+function getGhToken(force){
+  let t = null;
+  try{ t = localStorage.getItem("od_gh_token"); }catch(e){}
+  if(!t || force){
+    t = prompt("公開用のGitHubアクセストークンを入力してください（github_pat_… で始まる文字列）。\n初回のみの入力で、このブラウザに保存されます。\nトークンは管理者（山田さん）から共有を受けてください。", "");
+    if(t){ t = t.trim(); try{ localStorage.setItem("od_gh_token", t); }catch(e){} }
+  }
+  return t;
+}
+function ghHeaders(token){ return {"Authorization": "Bearer "+token, "Accept": "application/vnd.github+json"}; }
+function b64encodeUtf8(str){
+  const bytes = new TextEncoder().encode(str);
+  let bin = ""; bytes.forEach(b=>bin += String.fromCharCode(b));
+  return btoa(bin);
+}
+function b64decodeUtf8(b64){
+  const bin = atob((b64||"").replace(/\n/g,""));
+  return new TextDecoder().decode(Uint8Array.from(bin, c=>c.charCodeAt(0)));
+}
+async function ghGet(path, token){
+  const r = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${path}?ref=${GH_BRANCH}`, {headers: ghHeaders(token)});
+  if(r.status === 404) return null;
+  if(!r.ok) throw new Error("GitHub読み取りエラー ("+r.status+")");
+  return await r.json();
+}
+async function ghPut(path, content, message, token){
+  const existing = await ghGet(path, token);
+  const body = {message, content: b64encodeUtf8(content), branch: GH_BRANCH};
+  if(existing && existing.sha) body.sha = existing.sha;
+  const r = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${path}`,
+    {method: "PUT", headers: ghHeaders(token), body: JSON.stringify(body)});
+  if(r.status === 401 || r.status === 403) throw new Error("トークンが無効か、権限が不足しています（"+r.status+"）。「トークン再設定」からやり直してください。");
+  if(!r.ok) throw new Error("GitHub書き込みエラー ("+r.status+")");
+  return await r.json();
+}
+function slugifyCo(s){
+  const a = (s||"").replace(/株式会社|有限会社|合同会社/g,"").replace(/[^a-zA-Z0-9]/g,"").toLowerCase().slice(0,12);
+  return a || "job";
+}
+function randId(){ const a = new Uint32Array(2); crypto.getRandomValues(a); return a[0].toString(36)+a[1].toString(36); }
+function buildPublishHTML(j){
+  const css = document.querySelector("style").textContent;
+  const t = `${j.company||""}｜${j.title||""}`;
+  return `<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>${_html_escape_attr(t)}｜OVERDOOR求人票</title>
+<style>${css}
+body{background:#eef3f5}
+.vwrap{max-width:860px;margin:0 auto;padding:18px 10px 40px}
+.vbar{display:flex;justify-content:flex-end;margin-bottom:10px}
+.vwrap .sheet{width:auto;min-height:0;padding:42px 38px}
+@media (max-width:640px){.vwrap .sheet{padding:20px 14px}.pv .cards{flex-direction:column}}
+@media print{.vbar{display:none}.vwrap{padding:0;max-width:none}.vwrap .sheet{box-shadow:none;padding:0}}
+</style></head><body>
+<div class="vwrap">
+  <div class="vbar"><button class="btn btn-print" onclick="window.print()">🖨 印刷 / PDF保存</button></div>
+  <div class="sheet"><div class="pv">${buildDocHTML(j)}</div></div>
+</div></body></html>`;
+}
+async function publishJob(){
+  saveActive();
+  const j = jobs[active];
+  if(jobIsEmpty(j)){ alert("公開する求人票が空です。先に求人票を作成してください。"); return; }
+  if(!j.company || !j.title){ if(!confirm("会社名またはポジション名が未入力です。このまま公開しますか？")) return; }
+  const token = getGhToken(false);
+  if(!token){ alert("トークンが未入力のため公開できません。"); return; }
+  const btn = $("pubbtn"); const orig = btn.textContent; btn.disabled = true;
+  try{
+    btn.textContent = "⏳ 公開中…";
+    const slug = `job-${slugifyCo(j.company)}-${randId()}`;
+    await ghPut(slug+".html", buildPublishHTML(j), "求人票公開: "+(j.company||"")+" "+(j.title||""), token);
+    // 一覧データ更新
+    let list = [];
+    const cur = await ghGet("jobs.json", token);
+    if(cur){ try{ list = (JSON.parse(b64decodeUtf8(cur.content)).jobs)||[]; }catch(e){} }
+    list.unshift({slug, company: j.company||"", title: j.title||"", salary: j.salv||"", date: new Date().toISOString().slice(0,10)});
+    await ghPut("jobs.json", JSON.stringify({jobs: list}, null, 1), "求人一覧更新", token);
+    const url = SITE_BASE + slug + ".html";
+    $("parsenote").style.display = "block";
+    $("parsenote").innerHTML =
+      `🌐 公開しました！反映まで1〜2分かかります。候補者にはこのURLを送付してください：<br>` +
+      `<a href="${url}" target="_blank" rel="noopener">${url}</a> ` +
+      `<button class="mini" onclick="navigator.clipboard.writeText('${url}').then(()=>this.textContent='コピー済み')">URLコピー</button><br>` +
+      `📋 <a href="${SITE_BASE}jobs.html" target="_blank" rel="noopener">公開済み求人の一覧を見る</a>　` +
+      `<button class="mini" onclick="getGhToken(true)">トークン再設定</button>`;
+  }catch(e){
+    alert("公開に失敗しました: "+e.message);
+  }finally{
+    btn.disabled = false; btn.textContent = orig;
+  }
 }
 /* ============ zipで一括保存 ============ */
 function loadScript(src){
