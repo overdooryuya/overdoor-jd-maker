@@ -1,0 +1,148 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>株式会社スミカ｜広告運用オペレーション｜OVERDOOR求人票</title>
+<style>
+:root{
+  --teal:#38A4BB; --yellow:#E0D224; --dark:#253F48;
+  --label-bg:#E9F3F6; --border:#DCE5E9;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP","Yu Gothic",Meiryo,sans-serif;color:var(--dark);background:#eef3f5}
+/* ================= app layout ================= */
+.appbar{background:var(--dark);color:#fff;padding:10px 20px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:50}
+.appbar .lg{font-weight:900;letter-spacing:4px}
+.appbar .lg .y{color:var(--yellow)}
+.appbar .sub{font-size:12px;opacity:.85}
+.appbar .spacer{flex:1}
+.btn{border:none;border-radius:6px;padding:9px 18px;font-weight:800;font-size:13px;cursor:pointer}
+.btn-print{background:var(--yellow);color:var(--dark)}
+.btn-ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.4)}
+.wrap{display:flex;gap:0;align-items:flex-start}
+.editor{width:460px;flex:none;background:#fff;border-right:1px solid var(--border);min-height:calc(100vh - 50px);padding:16px 18px 60px}
+.stage{flex:1;padding:24px;display:flex;justify-content:center}
+.sheet{background:#fff;width:794px;min-height:1123px;box-shadow:0 2px 16px rgba(37,63,72,.18);padding:57px 53px}
+/* ================= editor ================= */
+.drop{border:2px dashed var(--teal);border-radius:10px;background:#f2fafc;padding:18px;text-align:center;color:var(--teal);font-size:13px;font-weight:700;cursor:pointer;transition:.15s}
+.drop.on{background:#dff2f7}
+.drop input{display:none}
+.drop small{display:block;font-weight:400;color:#5c7681;margin-top:4px}
+details.paste{margin-top:8px;font-size:12px}
+details.paste summary{cursor:pointer;color:var(--teal);font-weight:700}
+textarea.pastebox{width:100%;height:110px;margin-top:6px;font-size:11px;border:1px solid var(--border);border-radius:6px;padding:8px}
+.parse-note{font-size:11px;color:#946f00;background:#fdf7dc;border-radius:6px;padding:8px 10px;margin-top:8px;display:none}
+.ed-h{font-size:12.5px;font-weight:900;border-left:5px solid var(--teal);padding-left:8px;margin:20px 0 8px}
+.f{margin-bottom:8px}
+.f label{display:block;font-size:11px;font-weight:700;color:#41626e;margin-bottom:2px}
+.f input,.f textarea{width:100%;border:1px solid var(--border);border-radius:5px;padding:6px 8px;font-size:12px;font-family:inherit;color:var(--dark)}
+.f textarea{min-height:54px;resize:vertical;line-height:1.6}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px}
+.rowitem{border:1px solid var(--border);border-radius:7px;padding:8px;margin-bottom:8px;background:#fbfdfe}
+.rowitem .rhead{display:flex;gap:6px;margin-bottom:4px}
+.rowitem .rhead input{flex:1;font-weight:700}
+.mini{border:none;background:#e7eef1;color:#41626e;border-radius:5px;font-size:11px;padding:4px 8px;cursor:pointer;font-weight:700}
+.mini:hover{background:#d6e4e9}
+.mini.del{color:#a33}
+.addbar{margin:4px 0 14px}
+.sec-ed{border:1px solid var(--border);border-left:4px solid var(--teal);border-radius:8px;padding:10px;margin-bottom:12px;background:#fff}
+.sec-ed>.shead{display:flex;gap:6px;margin-bottom:8px}
+.sec-ed>.shead input{flex:1;font-weight:900;font-size:13px;border:1px solid var(--border);border-radius:5px;padding:5px 8px}
+.hint{font-size:11px;color:#5c7681;line-height:1.7;margin-top:6px}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0}
+.tabc{display:flex;align-items:center;gap:6px;border:1.5px solid var(--border);border-radius:20px;padding:4px 8px 4px 14px;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:#41626e;max-width:200px}
+.tabc .tl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tabc.on{border-color:var(--teal);background:var(--teal);color:#fff}
+.tabc .tx{border:none;background:rgba(0,0,0,.08);border-radius:50%;width:16px;height:16px;line-height:14px;font-size:11px;cursor:pointer;color:inherit;flex:none}
+.tabc.on .tx{background:rgba(255,255,255,.25)}
+/* ================= preview (OVERDOOR design) ================= */
+.pv{font-size:10.5px;line-height:1.75;color:var(--dark)}
+.pv .header{display:flex;justify-content:space-between;align-items:center;padding-bottom:12px;border-bottom:3px solid var(--teal);margin-bottom:20px}
+.pv .logo{display:flex;align-items:center;gap:12px}
+.pv .mark{position:relative;width:40px;height:40px}
+.pv .sq{position:absolute;border-radius:9px}
+.pv .sq.t{width:32px;height:32px;left:0;top:0;background:var(--teal)}
+.pv .sq.y{width:20px;height:20px;left:10px;top:16px;background:var(--yellow)}
+.pv .wm{font-weight:900;font-size:17px;letter-spacing:5px}
+.pv .tag{font-size:8px;letter-spacing:3px;color:var(--teal);margin-top:1px}
+.pv .jd{border:2px solid var(--teal);border-radius:7px;color:var(--teal);font-weight:800;font-size:13px;letter-spacing:6px;padding:8px 16px 8px 22px}
+.pv .company{display:flex;align-items:center;gap:8px;color:var(--teal);font-weight:800;font-size:12.5px;margin-bottom:4px}
+.pv .company::before{content:"";width:12px;height:12px;border-radius:3px;background:var(--yellow);display:inline-block;flex:none}
+.pv h1{font-size:19px;font-weight:900;margin-bottom:4px}
+.pv .catch{color:#5c7681;font-size:9.5px;margin-bottom:4px}
+.pv table{border-collapse:collapse;width:100%}
+.pv th,.pv td{border:1px solid var(--border);padding:6px 12px;vertical-align:top;text-align:left;font-weight:normal}
+.pv th{background:var(--label-bg);font-weight:700}
+.pv .basic{margin-top:12px}
+.pv .basic th{width:13%;white-space:nowrap}
+.pv .basic td{width:37%}
+.pv .def th{width:17%}
+.pv .salary{background:var(--teal);border-radius:6px;color:#fff;margin-top:14px;padding:10px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.pv .pill{background:var(--yellow);color:var(--dark);font-weight:800;font-size:11px;border-radius:4px;padding:3px 12px;flex:none}
+.pv .sal-main{font-size:17.5px;font-weight:900;letter-spacing:.5px}
+.pv .sal-sub{font-size:10px;opacity:.95}
+.pv .section{margin-top:20px}
+.pv .sec-head{font-size:13px;font-weight:900;border-left:6px solid var(--teal);border-bottom:3px solid var(--yellow);padding:2px 0 6px 12px;margin-bottom:12px;page-break-after:avoid}
+.pv .cards{display:flex;gap:14px}
+.pv .card{flex:1;border-radius:6px;overflow:hidden}
+.pv .card-head{font-weight:800;font-size:11.5px;padding:6px 14px}
+.pv .tc{border:1.5px solid var(--teal)}
+.pv .tc .card-head{background:var(--teal);color:#fff}
+.pv .yc{border:1.5px solid var(--yellow)}
+.pv .yc .card-head{background:var(--yellow);color:var(--dark)}
+.pv .card-body{padding:8px 14px 10px}
+.pv .disclaimer{margin-top:26px;padding-top:8px;border-top:1px solid var(--border);color:#6b8089;font-size:8.5px;line-height:1.9}
+.pv .footbar{margin-top:10px;background:var(--dark);border-radius:5px;color:#fff;display:flex;justify-content:space-between;align-items:center;padding:8px 16px;font-size:9px}
+.pv .footbar .fl{font-weight:900;letter-spacing:4px;font-size:11px}
+.pv .footbar .fl .y{color:var(--yellow)}
+.pv a{color:var(--teal);text-decoration:underline;word-break:break-all}
+.jobdoc + .jobdoc{break-before:page;page-break-before:always;margin-top:40px;border-top:2px dashed var(--border);padding-top:40px}
+@media print{.jobdoc + .jobdoc{margin-top:0;border-top:none;padding-top:0}}
+/* ================= print ================= */
+@page{size:A4;margin:15mm 14mm}
+@media print{
+  body{background:#fff}
+  .appbar,.editor{display:none!important}
+  .wrap,.stage{display:block;padding:0}
+  .sheet{width:auto;min-height:0;box-shadow:none;padding:0}
+  .pv,.pv *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+
+body{background:#eef3f5}
+.vwrap{max-width:860px;margin:0 auto;padding:18px 10px 40px}
+.vbar{display:flex;justify-content:flex-end;margin-bottom:10px}
+.vwrap .sheet{width:auto;min-height:0;padding:42px 38px}
+@media (max-width:640px){.vwrap .sheet{padding:20px 14px}.pv .cards{flex-direction:column}}
+@media print{.vbar{display:none}.vwrap{padding:0;max-width:none}.vwrap .sheet{box-shadow:none;padding:0}}
+</style></head><body>
+<div class="vwrap">
+  <div class="vbar"><button class="btn btn-print" onclick="window.print()">🖨 印刷 / PDF保存</button></div>
+  <div class="sheet"><div class="pv">
+    <div class="header"><div class="logo"><div class="mark"><span class="sq t"></span><span class="sq y"></span></div>
+      <div><div class="wm">OVER DOOR</div><div class="tag">“働く”の可能性を、もっと楽しく</div></div></div>
+      <div class="jd">JOB DESCRIPTION</div></div>
+    <div class="company">株式会社スミカ</div>
+    <h1>広告運用オペレーション</h1>
+    <div class="catch">  未経験活躍中  【広告運用オペレーション】最先端 AI× 不動産テック！月給 28 万円〜</div>
+    <table class="basic"><tr><th>業種</th><td>IT× 不動産、不動産仲介・売買、 IT× 不動産、その他 IT・ Web サービス、 IT× バックオ</td><th>雇用形態</th><td>正社員 フィス</td></tr><tr><th>職種</th><td>一般事務、その他事務関連職、広報・ PR、その他マーケティング・企画・広報関連</td><th>採用ポジション</th><td>中途採用</td></tr><tr><th>設立年</th><td>2022 年</td><th>職位</th><td>リーダー、メンバー 職、一般事務、専門事務（IT・医療・金融・不動産・貿易等）</td></tr><tr><th>従業員数</th><td>31 ~ 50 名</td><th>最終学歴</th><td>学歴不問</td></tr><tr><th>上場区分</th><td>未上場</td><th>職種経験</th><td>職種未経験 OK</td></tr><tr><th>勤務地</th><td>東京</td><th>業種経験</th><td>業種未経験 OK</td></tr></table>
+    <div class="salary"><span class="pill">想定年収</span><span class="sal-main">338 万円〜 504 万円</span><span class="sal-sub">月給：28.1 万円〜 42 万円</span></div><div class="section"><div class="sec-head">どのような人を求めているか</div>
+    <div class="cards">
+      <div class="card tc"><div class="card-head">必要条件</div><div class="card-body">★ 業種職種未経験 OK！ ★ ・何かしらの折衝・接客経験１年以上 (アルバイトも可)<br>・正社員・派遣社員・契約社員として 3 社以内の方（アルバイトは除く）<br>◎ 必須要件 ◎<br>・コミュニケーション能力、成長意欲がある方 ◎ このような思考性の方内定出てます！ ◎<br>・人とお話しするのが好きな方<br>◎ 入社者の前職事例 ◎ ・人に頼られることに喜びを感じられる方<br>・居酒屋でのアルバイト・他者の意見を素直に受け入れられる方<br>・コンビニエンスストアでの接客・今後のキャリアや目標をお持ちの方<br>・飲食アルバイトのマネージャー経験・結果を出していく為に自主的に行動できる方</div></div>
+      <div class="card yc"><div class="card-head">内定の可能性が高い人</div><div class="card-body"></div></div>
+    </div></div><div class="section"><div class="sec-head">求人概要</div>
+      <table class="def"><colgroup><col style="width:17%"><col></colgroup>
+      <tr><th>事業内容と今後の事業展開</th><td>▪️ システムを更にその先へ<br>レガシーな産業と業務の多様化による課題を、<br>最先端のシステムと卓越したオペレーション、人 × システムのテクノロジーで解決する<br>創業以来一貫して不動産業界の顧客対応を行っており、最先端のシステムやオペレーションが<br>構築されており、多くのノウハウがございます。<br>現時点で国内最先端レベルの優位性を持ちつつも、市場の拡大に対してはまだまだ追いついているとは言えないでしょう。<br>飽和状態である、システムの導入では解決をできない、根本原因である人手不足を、<br>システムとオペレーションを持ち合わせた弊社だからこそ、クライアントの課題解決、延いては売上の最大化に貢献します。<br>少しでも多くのお客様にサービスを提供できるよう 日々システム開発・オペレーション改善に勤しんでいき、<br>1 つのインターネット史に残るようなサービスを作り上げたいと思っています。</td></tr><tr><th>募集背景</th><td>新規部署立ち上げ / 増員募集 / 更なる組織強化<br>PR ポイント ★ 経験や年齢に左右されることはなくキャリア形成が可能 ★<br>ーーーーーーーーーーーーーーーーーーー<br>  最速で縦にも横にもキャリアを広げられる環境  <br>ーーーーーーーーーーーーーーーーーーー<br>・入社 1 年目でマネージャーに昇格した実例あり。適性と希望総合的に検討し、キャリアアップやジョブチェンジも可能な柔軟な体制<br>となっています。<br>また、昇格や昇給のチャンスは年 2 回あり可能性は無限大です！<br>・平均年齢が 27 歳と若手活躍中！ 20 代のうちから管理職を目指せます。<br>・「目標に対する成果＋プロセス」で評価される公平な人事評価制度あり！！<br>・「IT× 不動産」領域に未経験でも従事可能で価値の高い人材になれる。<br>→ 業界初の取り組みとしてまだ誰も取り組んでいない分野にチャレンジしているからこそ、導入いただくための引き出しが増えて<br>様々なスキルを身に付けることも可能。<br>ーーーーーーーーーーーーーーーーーーー<br>  研修制度が手厚く用意されているから安心  <br>ーーーーーーーーーーーーーーーーーーー<br>・入社後はマンツーマンでの研修を通じて、不動産の基礎知識や IT ツールの操作方法、お客様とのコミュニケーションスキルなどを<br>しっかりと身につけていただけます。常に先輩社員に相談できる、サポート体制も整っているからこそ早期に独り立ちできる実績が<br>多数ございます！！<br>だからこそ未経験の方でも成果を出されている方多数いらっしゃいます！<br>・また、サービスをより良くしていくために、メンバー全員で話し合いながら意思決定をする文化があります<br>改善点や課題があれば、いつでも気軽に発信できる環境です<br>ーーーーーーーーーーーーーーーーーーー<br>  業界課題の先駆者として貢献できる  <br>ーーーーーーーーーーーーーーーーーーー<br>・単なる顧客対応代行にとどまることもなく、不動産業界の長年の課題でもある「IT 化・業務効率化」を推進する業界初の先駆者と<br>して業界全体に貢献するやりがいのある仕事です。様々な課題にアプローチするためにも新規事業に携わる機会もありますし、今後<br>は不動産業界以外の課題にも向き合いながら更なる貢献を体験できる仕事です。</td></tr><tr><th>この求人の魅力</th><td>（理念・ビジョン）<br><br>◢◤ 消費者と不動産業界を繋ぐ架け橋を目指して ◢◤<br>不動産業界は現在、深刻な人材不足と DX 化の遅れが発 生 しています。「住」は消費者の 生 活において必要不可欠なもの且つ人 生 にお<br>いて大きな買い物になるものであるからこそ納得いく最大限のサービス提供が必要であると考えています。私たちは先駆者として変<br>革をリードし、業界全体の課題解決に向き合い続けています。<br>将来的には不動産業界だけにとどまらず、人手不足に悩むあらゆる業界へ最先端のシステムやオペレーションを駆使してサービスを<br>広げていきたいと考えています。<br>（仕事・事業）<br>◢◤ 不動産業界の課題にアプローチできる業界初の独自システム ◢◤<br>  主要顧客<br>  不動産賃貸企業 (上場大手〜ベンチャー企業まで) 導入実績は 600 店舗以上・売上前年比 300％以上  <br>（内容）<br>アパマンショップをはじめとする不動産仲介業者の代理として SUUMO などのポータルサイトから寄せられるお客様のお問い合わせに<br>迅速かつ丁寧に対応します。<br>対応を通じて店舗への来店や内見を促す活動を行っています。<br>お問い合わせに対してアプローチし、来店のアポイントを獲得していく事から効率良く集客を行っており、多くの企業様に満足頂い<br>ております。<br>今年度も前年度比 3 倍の売上達成し、更なる拡大を目指して成長しています。<br>  主力製品・サービス<br> LINE チャットサービス「スミカ」 &gt; <br>生 活に身近な LINE を通じて、いつでも気軽にお部屋探しの相談ができるチャット対応サービスです。<br>&lt; ポータルサイト（SUUMO など）からのお問い合わせ対応 &gt;<br>忙しくて中々連絡の取れない不動産仲介業者に代わり、 SUUMO などのポータルサイトから寄せられるお客様のお問い合わせに迅速か<br>つ丁寧に対応します。 スミカによる成約率は 25％と競合他社や不動産賃貸店舗の平均（10％）と比べると高水準です。<br>&lt; 物件情報のポータルサイト掲載業務 &gt;<br>大量の物件データを取り扱い、 SUUMO など各種ポータルサイトへの物件掲載を代行。効率的な集客を支援しています。<br>（働く人・社風）<br>◢◤ 社内平均年齢 27 歳、未経験からでも安心してスタートできる若手がメインのアットホームな企業 ◢◤<br>メンバーとして独り立ちするまでは先輩社員がマンツーマンでフォローする手厚い体制として丁寧な研修を実施しています。<br>動画等を用いた不動産知識や IT ツールの説明、ロープレやフィードバックを何度も繰り返し、実践的なスキルを 着実に早期に身につ<br>けることができます。メンター以外のチーム内の先輩にも気軽に聞けるほどの手厚いフォローもあり、約 2 週間で皆さんが独り立ちし<br>活躍しています。<br>社内全体での平均年齢も 27 歳、管理ポジションも 20 代で経験可能なで年齢に関係なく様々なポストに抜擢される環境です。<br>適正と要望に応じて柔軟にジョブチェンジもできる環境であるからこそ多くの社員が縦横にキャリアが広げています。<br>業務外の交流も充実で社員全体で外食するほど仲間とのつながりが強いアットホームな企業です。<br>（給与・待遇）<br>◢◤20 代で役職登用の実績多数！ 最短 6 か月で昇給・昇格も可能 ◢◤<br>スミカの給与体系は基本給＋各種手当で構成しています。昇給は年 2 回（半年に 1 回）あります。<br>評価は人事評価制度を導入しており、年功序列ではなく成果重視（アポイント取得数等の定量面＋達成に向けた活動内容（PDCA）等<br>の定性面）の 2 軸で評価しており、実力主義且つ成果重視の環境です。未経験者でも頑張りが直に評価される為、年齢関係なく昇給・<br>昇進を目指せます。<br>実際に入社して 1 年経たずに SV や管理職に就いた方もいる程、キャリアアップの機会が多い企業です。<br>〈年収例〉<br>・入社 1 年目／ 29 歳／マネージャー／ 550 万円<br>充実した福利厚 生 もあり、仕事だけでなくライフスタイルの多様性も尊重する制度が整っています。</td></tr><tr><th>仕事内容</th><td>■ 仕事内容「不動産業界の当たり前を、私たちが変える」<br>当社は、不動産仲介店舗に代わりに集客を完結させる「BPaaS（Business Process as a Service）」を展開しています。 入社後は<br>まず掲載事業部の【オペレーション担当】として、提携する不動産会社の売上を最大化させるため、業界初の「物件の広告代理店」<br>における中核業務をお任せします。スミカが提供するのは、単なるデータ入力代行ではありません。 AI 技術による図面・写真の高度<br>な解析システムと、人による丁寧なオペレーション構築を掛け合わせ、これまで営業マンが片手間で行っていた「物件選定・図面入<br>力・掲載更新」という一連の広告運用プロセスを一気通貫で自動化・標準化させる重要なポジションです。<br>  キャリアの広がり（段階的なステップアップ）<br>「言われた入力作業をこなすだけ」で終わらせないのがスミカ流です。<br>業務に慣れた後は、適性や希望に応じて以下のような「事業を創る」領域に挑戦いただけます。<br>AI 解析システムと連携した物件情報の選定、図面データの入力・登録、掲載中物件の更新管理および管理会社への掲載確認業務。 未<br>経験からでも、業界最先端の AI ツール活用ノウハウと、不動産広告における専門知識を最短距離で習得可能です。<br>在宅で活躍するギグワーカーの採用、研修、稼働後のフォローアップ。<br>パートナーの組織体制を強化し、オペレーションの品質・セキュリティを最大化させます。<br>新メンバーの採用・育成、チーム運営。<br>入社 1 年目でマネージャー昇格の実績もあり、 20 代から管理職を目指せる環境です。<br>現場の課題をエンジニアにフィードバックし、図面解析 AI や自動入力システムの機能改善を推進。<br>「もっとこうすれば効率化できる」という現場の声をシステムやサービスに反映させます。<br>  入社後の流れ：未経験でも安心の「2 週間」集中プログラム<br>入社後は、先輩社員がマンツーマンで指導するメンター制度を用意しています。<br>不動産知識、 IT ツールの操作方法、 AI 解析・掲載システムの操作方法を座学や動画で習得。<br>実践トレーニング: 実際の図面入力や物件更新のシミュレーションを繰り返し、着実にスキルアップ。<br>約 2 週間で実際の広告運用オペレーションをスタート！常に周囲がフォローする体制なので、早期に独り立ちが可能です。<br>  働く環境と魅力圧倒的な成長スピード:<br><br>昇給・昇格のチャンスは年 2 回。年功序列ではなく「成果＋プロセス」を公平に評価します。<br>  自分らしい働き方:<br>月ごとの固定シフト制。<br>有給休暇の消化率は 100％を推奨しており、オンオフのメリハリを大切にできます。<br>  若手中心の活気ある社風:<br>平均年齢 27 歳（正社員）。自分らしく活躍できる環境です。</td></tr><tr><th>現在の組織構成</th><td>部署の人数： 8<br>チームのメンバー数： 8 名<br>社内平均年齢： 27 歳<br>男女比率 4： 6</td></tr><tr><th>給与・年収例</th><td>〈給与〉〈年収例〉<br>給与形態：月給制・入社 1 年目／ 29 歳／マネージャー／ 550 万円<br>想定年収： 338 万円〜 504 万円<br>月給: 28.1 万円〜 42 万円<br>賞与回数：賞与なし<br>昨年度賞与実績：<br>インセンティブ：あり<br>〈補足情報〉<br>・スキル・経験に応じて給与は決定します。<br>・固定残業代（45 時間分）を含む。超過分は別途支給。<br>・試用期間 2ヶ月（期間中の変動はなし）</td></tr><tr><th>勤務地・勤務時間</th><td>〈勤務地〉〈勤務時間〉<br>東京都港区芝大門 2-11-1 富士ビル 5F 08:00 〜 20:00<br>・浜松町駅・大門駅より徒歩 5 分、芝公園駅より徒歩 6 分 。夜間勤務：なし<br>自社内勤務月間平均残業時間： 40 時間以下<br>転勤の可能性：なし<br>〈補足情報〉<br>■ 勤務時間<br>08:00 〜 20:00 の間での勤務（実働 8 時間／休憩 1 時間）<br>▼ 勤務時間例<br>・ 09:00 〜 18:00<br>■ 残業について<br>業務状況により残業が発 生 する場合があります。<br>給与には固定残業代として 1 日 2 時間分が含まれており、<br>実際の残業時間は月平均で約 40 時間程度となっています。<br>チームで業務を分担しながら対応しており、状況に応じて協力しながら業務を進めていく環境です。<br>休 日 休暇・受動喫煙対策・福利厚 生 〈休 日 休暇〉〈受動喫煙対策〉<br>休 日：シフト制受動喫煙対策の有無：対策あり<br>年間休 日： 110 日 受動喫煙対策について: 禁煙<br>休暇制度：有給休暇、年末年始休暇、産休・育休特記事項 : オフィス近くに喫煙スペースがあります。<br>補足情報：・完全週休 2 日 制<br>・年次有給休暇（入社半年後 10 日 〜勤続年数に応じて最大 20<br>日）<br>・月ごとに休 日 の設定を行うが、有給休暇を自由に消化可能<br>有給消化 100% 推奨<br>〈福利厚 生・諸手当〉<br>交通費支給、社会保険完備、住宅手当、健康診断、社員割引制度、役職手当<br>補足情報：・健康診断<br>・有給休暇 （有給消化 100％推奨）<br>・年末年始休暇<br>・育児休暇<br>・社員ランチ・飲み会補助制度<br>・従業員の引っ越しサポートあり<br>・住宅手当<br>・土 日 出勤手当<br>・交通費全額支給<br>・服装・髪色・髪型・ピアス・ネイル自由<br>・受動喫煙対策あり（屋内全面禁煙）</td></tr></table></div><div class="section"><div class="sec-head">選考情報</div>
+      <table class="def"><colgroup><col style="width:17%"><col></colgroup>
+      <tr><th>選考フロー</th><td>履歴書の提出: 必須 ▼ 書類選考<br>職務経歴書の提出: 必須 ▼ 一次面接（オンライン）<br>カジュアル面談の有無 : 状況に応じてある ▼ 最終面接（来社）<br>会社説明会の有無: 状況に応じてある ▼ 現場交流会（来社）<br>適性テストの有無: 状況に応じてある ▼ 内定<br>※ 一次面接は人事責任者、最終面接は現場責任者が担当します。<br>※ 選考回数や内容は、変更となる場合がございます。</td></tr><tr><th>補足情報</th><td>＜書類選考＞<br>担当者：人事責任者<br>主に確認しているポイント：<br>・既往歴がない<br>・年齢が 33 歳以下<br>・外国籍ではない<br>&lt;1 次面接（オンライン）＞<br>担当者：人事責任者<br>★ 主に確認しているポイント：<br>・お部屋探しのサポートをお任せできそうかどうか（お客様に端的にわかりやすい説明ができるかどうか）<br>└ 特に Q&amp;A にズレがないか / 簡潔に受け答えができるか<br>♦ 一次面接では誰とでも分け隔てなく接する能力があるかを軸に面接しています。<br>＜最終面接（来社）＞<br>★ 主に確認しているポイント：<br>・お部屋探しのサポートをお任せできそうかどうか（※ 一次面接同様）<br>└ Q&amp;A にズレがないか / 簡潔に受け答えができるか<br>・ご本人が目指す将来像と、当社で提供できるキャリアが一致しているか<br>└ 転職の軸 / 3 年後どういう仕事をしていたか/ 長期的に働いてくれそうか（志望動機）<br>♦ 最終面接では一次面接の内容に加えてカルチャー（人間性）を軸に面接しています。<br>素直な方や成長志向があるか等が一例として挙げられます。</td></tr></table></div><div class="section"><div class="sec-head">会社情報</div>
+      <table class="def"><colgroup><col style="width:17%"><col></colgroup>
+      <tr><th>会社名</th><td>株式会社スミカ<br>会社 HP https:// corp.sumika.live/</td></tr><tr><th>本社所在地</th><td>東京都 港区芝大門 2-11-1 富士ビル 5F</td></tr><tr><th>業種</th><td>IT× 不動産、不動産仲介・売買、 IT× 不動産、その他 IT・ Web サービス、 IT× バックオフィス</td></tr><tr><th>設立年</th><td>2022 年</td></tr><tr><th>従業員数</th><td>31 ~ 50 名</td></tr><tr><th>上場区分</th><td>未上場</td></tr><tr><th>平均年齢</th><td>28 歳</td></tr><tr><th>男女比率</th><td>5:5</td></tr></table></div><div class="section"><div class="sec-head">発行者</div>
+    <table class="def"><colgroup><col style="width:17%"><col></colgroup>
+    <tr><th>事業者名</th><td>株式会社OVER DOOR</td></tr>
+    <tr><th>有料職業紹介許可番号</th><td>23-ユ-302895</td></tr></table></div>
+    <div class="disclaimer">
+      <div>※応募意思を頂いた段階で、求人企業へ特定個人情報の開示がされますことも、予めご了承ください。</div>
+      <div>・本求人票に記載されている労働条件等の情報は、労働契約締結時の労働条件と異なる場合がありますので、ご相談いただけますと幸いです。</div>
+      <div>・本求人票には一般には公開されていない情報も含まれておりますので、第三者への提供・転送を禁止させて頂いております。</div>
+    </div>
+    <div class="footbar"><div class="fl">OVER <span class="y">DOOR</span></div>
+      <div>“働く”の可能性を、もっと楽しく　｜　株式会社OVER DOOR（有料職業紹介許可番号 23-ユ-302895）</div></div></div></div>
+</div></body></html>
