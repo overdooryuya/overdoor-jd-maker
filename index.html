@@ -135,7 +135,7 @@ textarea.pastebox{width:100%;height:64px;font-size:11px;border:1px solid var(--b
     <input type="file" id="file" accept="application/pdf" multiple>
   </label>
   <div class="pastewrap">
-    <div class="pw-label">🔗 URL・テキストの貼り付けでもOK</div>
+    <div class="pw-label">🔗 URL・テキストの貼り付けでもOK（貼り付けると自動で読み込みます）</div>
     <textarea class="pastebox" id="pastebox" placeholder="例：株式会社◯◯ 🔷【ポジション名】～ https://circus-job.com/search/…&#10;（求人URL付きの紹介文や、求人票の全文テキストをそのまま貼り付け）"></textarea>
     <button class="btn-parse" onclick="parseFromPaste()">⤵ 読み込む</button>
   </div>
@@ -817,6 +817,10 @@ async function extractPdfText(file){
     return null;
   }
 }
+// 貼り付けた瞬間に自動解析（ボタン押し忘れ対策）
+$("pastebox").addEventListener("paste", ()=>{
+  setTimeout(()=>{ if($("pastebox").value.trim()) parseFromPaste(); }, 80);
+});
 const drop = $("drop");
 drop.addEventListener("dragover",e=>{e.preventDefault();drop.classList.add("on")});
 drop.addEventListener("dragleave",()=>drop.classList.remove("on"));
