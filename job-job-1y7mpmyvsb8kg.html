@@ -1,0 +1,140 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>株式会社セルム｜セルム/大阪｜OVERDOOR求人票</title>
+<style>
+:root{
+  --teal:#38A4BB; --yellow:#E0D224; --dark:#253F48;
+  --label-bg:#E9F3F6; --border:#DCE5E9;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP","Yu Gothic",Meiryo,sans-serif;color:var(--dark);background:#eef3f5}
+/* ================= app layout ================= */
+.appbar{background:var(--dark);color:#fff;padding:10px 20px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:50}
+.appbar .lg{font-weight:900;letter-spacing:4px}
+.appbar .lg .y{color:var(--yellow)}
+.appbar .sub{font-size:12px;opacity:.85}
+.appbar .spacer{flex:1}
+.btn{border:none;border-radius:6px;padding:9px 18px;font-weight:800;font-size:13px;cursor:pointer}
+.btn-print{background:var(--yellow);color:var(--dark)}
+.btn-ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.4)}
+.wrap{display:flex;gap:0;align-items:flex-start}
+.editor{width:460px;flex:none;background:#fff;border-right:1px solid var(--border);min-height:calc(100vh - 50px);padding:16px 18px 60px}
+.stage{flex:1;padding:24px;display:flex;justify-content:center}
+.sheet{background:#fff;width:794px;min-height:1123px;box-shadow:0 2px 16px rgba(37,63,72,.18);padding:57px 53px}
+/* ================= editor ================= */
+.drop{border:2px dashed var(--teal);border-radius:10px;background:#f2fafc;padding:18px;text-align:center;color:var(--teal);font-size:13px;font-weight:700;cursor:pointer;transition:.15s}
+.drop.on{background:#dff2f7}
+.drop input{display:none}
+.drop small{display:block;font-weight:400;color:#5c7681;margin-top:4px}
+.pastewrap{margin-top:8px;border:1.5px solid var(--border);border-radius:10px;padding:10px;background:#fbfdfe}
+.pw-label{font-size:12px;font-weight:800;color:var(--teal);margin-bottom:6px}
+textarea.pastebox{width:100%;height:64px;font-size:11px;border:1px solid var(--border);border-radius:6px;padding:8px;resize:vertical;font-family:inherit}
+.btn-parse{margin-top:6px;border:none;border-radius:6px;background:var(--teal);color:#fff;font-weight:800;font-size:12.5px;padding:8px 18px;cursor:pointer}
+.btn-parse:hover{opacity:.9}
+.parse-note{font-size:11px;color:#946f00;background:#fdf7dc;border-radius:6px;padding:8px 10px;margin-top:8px;display:none}
+.ed-h{font-size:12.5px;font-weight:900;border-left:5px solid var(--teal);padding-left:8px;margin:20px 0 8px}
+.f{margin-bottom:8px}
+.f label{display:block;font-size:11px;font-weight:700;color:#41626e;margin-bottom:2px}
+.f input,.f textarea{width:100%;border:1px solid var(--border);border-radius:5px;padding:6px 8px;font-size:12px;font-family:inherit;color:var(--dark)}
+.f textarea{min-height:54px;resize:vertical;line-height:1.6}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px}
+.rowitem{border:1px solid var(--border);border-radius:7px;padding:8px;margin-bottom:8px;background:#fbfdfe}
+.rowitem .rhead{display:flex;gap:6px;margin-bottom:4px}
+.rowitem .rhead input{flex:1;font-weight:700}
+.mini{border:none;background:#e7eef1;color:#41626e;border-radius:5px;font-size:11px;padding:4px 8px;cursor:pointer;font-weight:700}
+.mini:hover{background:#d6e4e9}
+.mini.del{color:#a33}
+.addbar{margin:4px 0 14px}
+.sec-ed{border:1px solid var(--border);border-left:4px solid var(--teal);border-radius:8px;padding:10px;margin-bottom:12px;background:#fff}
+.sec-ed>.shead{display:flex;gap:6px;margin-bottom:8px}
+.sec-ed>.shead input{flex:1;font-weight:900;font-size:13px;border:1px solid var(--border);border-radius:5px;padding:5px 8px}
+.hint{font-size:11px;color:#5c7681;line-height:1.7;margin-top:6px}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0}
+.tabc{display:flex;align-items:center;gap:6px;border:1.5px solid var(--border);border-radius:20px;padding:4px 8px 4px 14px;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:#41626e;max-width:200px}
+.tabc .tl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tabc.on{border-color:var(--teal);background:var(--teal);color:#fff}
+.tabc .tx{border:none;background:rgba(0,0,0,.08);border-radius:50%;width:16px;height:16px;line-height:14px;font-size:11px;cursor:pointer;color:inherit;flex:none}
+.tabc.on .tx{background:rgba(255,255,255,.25)}
+/* ================= preview (OVERDOOR design) ================= */
+.pv{font-size:10.5px;line-height:1.75;color:var(--dark)}
+.pv .header{display:flex;justify-content:space-between;align-items:center;padding-bottom:12px;border-bottom:3px solid var(--teal);margin-bottom:20px}
+.pv .logo{display:flex;align-items:center;gap:12px}
+.pv .mark{position:relative;width:40px;height:40px}
+.pv .sq{position:absolute;border-radius:9px}
+.pv .sq.t{width:32px;height:32px;left:0;top:0;background:var(--teal)}
+.pv .sq.y{width:20px;height:20px;left:10px;top:16px;background:var(--yellow)}
+.pv .wm{font-weight:900;font-size:17px;letter-spacing:5px}
+.pv .tag{font-size:8px;letter-spacing:3px;color:var(--teal);margin-top:1px}
+.pv .jd{border:2px solid var(--teal);border-radius:7px;color:var(--teal);font-weight:800;font-size:13px;letter-spacing:6px;padding:8px 16px 8px 22px}
+.pv .company{display:flex;align-items:center;gap:8px;color:var(--teal);font-weight:800;font-size:12.5px;margin-bottom:4px}
+.pv .company::before{content:"";width:12px;height:12px;border-radius:3px;background:var(--yellow);display:inline-block;flex:none}
+.pv h1{font-size:19px;font-weight:900;margin-bottom:4px}
+.pv .catch{color:#5c7681;font-size:9.5px;margin-bottom:4px}
+.pv table{border-collapse:collapse;width:100%}
+.pv th,.pv td{border:1px solid var(--border);padding:6px 12px;vertical-align:top;text-align:left;font-weight:normal}
+.pv th{background:var(--label-bg);font-weight:700}
+.pv .basic{margin-top:12px}
+.pv .basic th{width:13%;white-space:nowrap}
+.pv .basic td{width:37%}
+.pv .def th{width:17%}
+.pv .salary{background:var(--teal);border-radius:6px;color:#fff;margin-top:14px;padding:10px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.pv .pill{background:var(--yellow);color:var(--dark);font-weight:800;font-size:11px;border-radius:4px;padding:3px 12px;flex:none}
+.pv .sal-main{font-size:17.5px;font-weight:900;letter-spacing:.5px}
+.pv .sal-sub{font-size:10px;opacity:.95}
+.pv .section{margin-top:20px}
+.pv .sec-head{font-size:13px;font-weight:900;border-left:6px solid var(--teal);border-bottom:3px solid var(--yellow);padding:2px 0 6px 12px;margin-bottom:12px;page-break-after:avoid}
+.pv .cards{display:flex;gap:14px}
+.pv .card{flex:1;border-radius:6px;overflow:hidden}
+.pv .card-head{font-weight:800;font-size:11.5px;padding:6px 14px}
+.pv .tc{border:1.5px solid var(--teal)}
+.pv .tc .card-head{background:var(--teal);color:#fff}
+.pv .yc{border:1.5px solid var(--yellow)}
+.pv .yc .card-head{background:var(--yellow);color:var(--dark)}
+.pv .card-body{padding:8px 14px 10px}
+.pv .disclaimer{margin-top:26px;padding-top:8px;border-top:1px solid var(--border);color:#6b8089;font-size:8.5px;line-height:1.9}
+.pv .footbar{margin-top:10px;background:var(--dark);border-radius:5px;color:#fff;display:flex;justify-content:space-between;align-items:center;padding:8px 16px;font-size:9px}
+.pv .footbar .fl{font-weight:900;letter-spacing:4px;font-size:11px}
+.pv .footbar .fl .y{color:var(--yellow)}
+.pv a{color:var(--teal);text-decoration:underline;word-break:break-all}
+.jobdoc + .jobdoc{break-before:page;page-break-before:always;margin-top:40px;border-top:2px dashed var(--border);padding-top:40px}
+@media print{.jobdoc + .jobdoc{margin-top:0;border-top:none;padding-top:0}}
+/* ================= print ================= */
+@page{size:A4;margin:15mm 14mm}
+@media print{
+  body{background:#fff}
+  .appbar,.editor{display:none!important}
+  .wrap,.stage{display:block;padding:0}
+  .sheet{width:auto;min-height:0;box-shadow:none;padding:0}
+  .pv,.pv *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+
+body{background:#eef3f5}
+.vwrap{max-width:860px;margin:0 auto;padding:18px 10px 40px}
+.vbar{display:flex;justify-content:flex-end;margin-bottom:10px}
+.vwrap .sheet{width:auto;min-height:0;padding:42px 38px}
+@media (max-width:640px){.vwrap .sheet{padding:20px 14px}.pv .cards{flex-direction:column}}
+@media print{.vbar{display:none}.vwrap{padding:0;max-width:none}.vwrap .sheet{box-shadow:none;padding:0}}
+</style></head><body>
+<div class="vwrap">
+  <div class="vbar"><button class="btn btn-print" onclick="window.print()">🖨 印刷 / PDF保存</button></div>
+  <div class="sheet"><div class="pv">
+    <div class="header"><div class="logo"><div class="mark"><span class="sq t"></span><span class="sq y"></span></div>
+      <div><div class="wm">OVER DOOR</div><div class="tag">“働く”の可能性を、もっと楽しく</div></div></div>
+      <div class="jd">JOB DESCRIPTION</div></div>
+    <div class="company">株式会社セルム</div>
+    <h1>セルム/大阪</h1>
+    <div class="catch">【セルム/大阪】人材・組織開発コンサルティング営業（ソリューション企画・プロデュース）</div>
+    
+    <div class="section"><div class="sec-head">発行者</div>
+    <table class="def"><colgroup><col style="width:17%"><col></colgroup>
+    <tr><th>事業者名</th><td>株式会社OVER DOOR</td></tr>
+    <tr><th>有料職業紹介許可番号</th><td>23-ユ-302895</td></tr></table></div>
+    <div class="disclaimer">
+      <div>※応募意思を頂いた段階で、求人企業へ特定個人情報の開示がされますことも、予めご了承ください。</div>
+      <div>・本求人票に記載されている労働条件等の情報は、労働契約締結時の労働条件と異なる場合がありますので、ご相談いただけますと幸いです。</div>
+      <div>・本求人票には一般には公開されていない情報も含まれておりますので、第三者への提供・転送を禁止させて頂いております。</div>
+    </div>
+    <div class="footbar"><div class="fl">OVER <span class="y">DOOR</span></div>
+      <div>“働く”の可能性を、もっと楽しく　｜　株式会社OVER DOOR（有料職業紹介許可番号 23-ユ-302895）</div></div></div></div>
+</div></body></html>
