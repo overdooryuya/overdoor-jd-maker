@@ -117,6 +117,7 @@ textarea.pastebox{width:100%;height:110px;margin-top:6px;font-size:11px;border:1
   <div class="sub">求人票メーカー ― 他社フォーマットの求人票をOVERDOOR仕様に</div>
   <div class="spacer"></div>
   <button class="btn btn-ghost" onclick="resetAll()">新規作成</button>
+  <button class="btn btn-ghost" id="zipbtn" onclick="zipAll()" title="全タブを1社1ファイルのPDFにしてzipでダウンロードします">📦 zipで一括保存</button>
   <button class="btn btn-ghost" onclick="printAll()" title="全タブを1つのPDFに連結して印刷します">🖨 まとめて印刷</button>
   <button class="btn btn-print" onclick="window.print()">🖨 印刷 / PDF保存</button>
 </div>
@@ -352,6 +353,62 @@ function printAll(){
   window.print();
   setTimeout(restore, 1500); // afterprintが発火しないブラウザ向けフォールバック
 }
+/* ============ zipで一括保存 ============ */
+function loadScript(src){
+  return new Promise((res,rej)=>{
+    const s=document.createElement("script"); s.src=src;
+    s.onload=res; s.onerror=()=>rej(new Error("ライブラリを読み込めませんでした: "+src));
+    document.head.appendChild(s);
+  });
+}
+async function ensureZipLibs(){
+  if(!window.html2pdf) await loadScript("https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js");
+  if(!window.JSZip) await loadScript("https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js");
+}
+function safeName(s, fallback){ return (s||fallback).replace(/[\\\/:*?"<>|\n]/g,"_").slice(0,60); }
+async function buildZipBlob(progress){
+  await ensureZipLibs();
+  const list = jobs.filter(j=>!jobIsEmpty(j));
+  if(!list.length) throw new Error("出力する求人票がありません");
+  const zip = new JSZip();
+  const holder = document.createElement("div");
+  holder.style.cssText = "position:absolute;left:-10000px;top:0;width:730px;background:#fff";
+  document.body.appendChild(holder);
+  try{
+    let i = 0;
+    for(const j of list){
+      i++; if(progress) progress(i, list.length);
+      holder.innerHTML = `<div class="pv">${buildDocHTML(j)}</div>`;
+      const buf = await html2pdf().set({
+        margin:[13,13,13,13],
+        html2canvas:{scale:2, useCORS:true, logging:false},
+        jsPDF:{unit:"mm", format:"a4", orientation:"portrait"},
+        pagebreak:{mode:["css","legacy"]}
+      }).from(holder.firstChild).outputPdf("arraybuffer");
+      zip.file(`OVERDOOR求人票_${safeName(j.company,"会社名未設定")}_${safeName(j.title,"求人")}.pdf`, buf);
+    }
+  } finally { holder.remove(); }
+  return await zip.generateAsync({type:"blob"});
+}
+async function zipAll(){
+  saveActive();
+  const btn = $("zipbtn"); const orig = btn.textContent;
+  btn.disabled = true;
+  try{
+    btn.textContent = "⏳ 準備中…";
+    const blob = await buildZipBlob((i,n)=>{ btn.textContent = `⏳ 生成中 ${i}/${n}…`; });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    const cnt = jobs.filter(j=>!jobIsEmpty(j)).length;
+    a.download = `OVERDOOR求人票_一括${cnt}件.zip`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(a.href), 5000);
+  }catch(e){
+    alert("zip生成に失敗しました: "+e.message+"\nインターネット接続をご確認のうえ再度お試しください。");
+  }finally{
+    btn.disabled = false; btn.textContent = orig;
+  }
+}
 
 /* ============ parser ============ */
 const ALL_KEYS = [...BASIC_KEYS_L,...BASIC_KEYS_R,"想定年収","月給"];
@@ -400,6 +457,13 @@ function cleanupText(raw){
 
 function parseText(raw){
   const text = cleanupText(raw);
+  // URL付き求人メモ（会社名＋タイトル＋求人URLだけの貼り付け）
+  const urlMatch = text.match(/https?:\/\/\S+/);
+  if(urlMatch && text.trim().length < 700
+     && !text.includes("どのような人を求めているか") && !text.includes("求人内容")){
+    handleUrlMemo(text, urlMatch[0]);
+    return;
+  }
   // フォーマット判定: 「求人情報」システム出力形式 or circus形式
   const head = text.trim().slice(0,60);
   const isExport = /^求人情報/.test(head.trim()) || (text.includes("企業概要") && text.includes("求人内容"));
@@ -413,6 +477,28 @@ function parseText(raw){
     $("parsenote").innerHTML = "⚠ 自動振り分けできない形式だったため、全文を「求人概要」に入れました。フォーム上で項目に切り分けてください。";
   }
 }
+
+/* --- URL付き求人メモの取り込み --- */
+function handleUrlMemo(text, url){
+  const lines = text.split("\n").map(s=>s.trim()).filter(Boolean);
+  const compLine = lines.find(l=>/(株式会社|合同会社|有限会社)/.test(l) && l.length<=40 && !l.startsWith("http"));
+  if(compLine) $("company").value = compLine;
+  // 🔷等の装飾付きタイトル行
+  const titleLine = lines.find(l=>l!==compLine && !l.startsWith("http") && l.length>5);
+  if(titleLine){
+    const clean = titleLine.replace(/^[🔷🔶◆■●▼★☆♦\s]+/u, "");
+    const m = clean.match(/【(.+?)】/);
+    $("title").value = m ? m[1] : clean.slice(0,40);
+    $("catch").value = clean;
+  }
+  upd();
+  $("parsenote").style.display = "block";
+  $("parsenote").innerHTML =
+    `🔗 求人URLを検出し、会社名・タイトルを入力しました。求人内容の本文は次のどちらかで取り込んでください：<br>` +
+    `① <a href="${_html_escape_attr(url)}" target="_blank" rel="noopener">求人ページを開く</a> → ページの<b>PDFダウンロード</b>で保存 → そのPDFをここにドロップ<br>` +
+    `② 開いたページで <b>Ctrl+A → Ctrl+C</b>（全選択コピー）→ 下のテキスト欄に貼り付けて「解析してフォームへ」`;
+}
+function _html_escape_attr(s){ return s.replace(/"/g,"&quot;").replace(/</g,"&lt;"); }
 
 /* --- 形式B: 「求人情報」システム出力形式（SmartHR・ユーザベース等） --- */
 const EXPORT_LABELS = ["仕事内容","求人概要","業務内容","対象となる方","求める人物像","募集背景","やりがい","ポジションの魅力","働き方","カルチャー","勤務地","勤務条件","休日・休暇","福利厚生・保険","参考資料"];
