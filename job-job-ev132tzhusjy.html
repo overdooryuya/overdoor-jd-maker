@@ -1,0 +1,150 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>株式会社ワークポート｜首都圏／北海道／名古屋／大阪／福岡｜OVERDOOR求人票</title>
+<style>
+:root{
+  --teal:#38A4BB; --yellow:#E0D224; --dark:#253F48;
+  --label-bg:#E9F3F6; --border:#DCE5E9;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP","Yu Gothic",Meiryo,sans-serif;color:var(--dark);background:#eef3f5}
+/* ================= app layout ================= */
+.appbar{background:var(--dark);color:#fff;padding:10px 20px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:50}
+.appbar .lg{font-weight:900;letter-spacing:4px}
+.appbar .lg .y{color:var(--yellow)}
+.appbar .sub{font-size:12px;opacity:.85}
+.appbar .spacer{flex:1}
+.btn{border:none;border-radius:6px;padding:9px 18px;font-weight:800;font-size:13px;cursor:pointer}
+.btn-print{background:var(--yellow);color:var(--dark)}
+.btn-ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.4)}
+.wrap{display:flex;gap:0;align-items:flex-start}
+.editor{width:460px;flex:none;background:#fff;border-right:1px solid var(--border);min-height:calc(100vh - 50px);padding:16px 18px 60px}
+.stage{flex:1;padding:24px;display:flex;justify-content:center}
+.sheet{background:#fff;width:794px;min-height:1123px;box-shadow:0 2px 16px rgba(37,63,72,.18);padding:57px 53px}
+/* ================= editor ================= */
+.drop{border:2px dashed var(--teal);border-radius:10px;background:#f2fafc;padding:18px;text-align:center;color:var(--teal);font-size:13px;font-weight:700;cursor:pointer;transition:.15s}
+.drop.on{background:#dff2f7}
+.drop input{display:none}
+.drop small{display:block;font-weight:400;color:#5c7681;margin-top:4px}
+.pastewrap{margin-top:8px;border:1.5px solid var(--border);border-radius:10px;padding:10px;background:#fbfdfe}
+.pw-label{font-size:12px;font-weight:800;color:var(--teal);margin-bottom:6px}
+textarea.pastebox{width:100%;height:64px;font-size:11px;border:1px solid var(--border);border-radius:6px;padding:8px;resize:vertical;font-family:inherit}
+.btn-parse{margin-top:6px;border:none;border-radius:6px;background:var(--teal);color:#fff;font-weight:800;font-size:12.5px;padding:8px 18px;cursor:pointer}
+.btn-parse:hover{opacity:.9}
+.parse-note{font-size:11px;color:#946f00;background:#fdf7dc;border-radius:6px;padding:8px 10px;margin-top:8px;display:none}
+.ed-h{font-size:12.5px;font-weight:900;border-left:5px solid var(--teal);padding-left:8px;margin:20px 0 8px}
+.f{margin-bottom:8px}
+.f label{display:block;font-size:11px;font-weight:700;color:#41626e;margin-bottom:2px}
+.f input,.f textarea{width:100%;border:1px solid var(--border);border-radius:5px;padding:6px 8px;font-size:12px;font-family:inherit;color:var(--dark)}
+.f textarea{min-height:54px;resize:vertical;line-height:1.6}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px}
+.rowitem{border:1px solid var(--border);border-radius:7px;padding:8px;margin-bottom:8px;background:#fbfdfe}
+.rowitem .rhead{display:flex;gap:6px;margin-bottom:4px}
+.rowitem .rhead input{flex:1;font-weight:700}
+.mini{border:none;background:#e7eef1;color:#41626e;border-radius:5px;font-size:11px;padding:4px 8px;cursor:pointer;font-weight:700}
+.mini:hover{background:#d6e4e9}
+.mini.del{color:#a33}
+.addbar{margin:4px 0 14px}
+.sec-ed{border:1px solid var(--border);border-left:4px solid var(--teal);border-radius:8px;padding:10px;margin-bottom:12px;background:#fff}
+.sec-ed>.shead{display:flex;gap:6px;margin-bottom:8px}
+.sec-ed>.shead input{flex:1;font-weight:900;font-size:13px;border:1px solid var(--border);border-radius:5px;padding:5px 8px}
+.hint{font-size:11px;color:#5c7681;line-height:1.7;margin-top:6px}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0}
+.tabc{display:flex;align-items:center;gap:6px;border:1.5px solid var(--border);border-radius:20px;padding:4px 8px 4px 14px;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:#41626e;max-width:200px}
+.tabc .tl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tabc.on{border-color:var(--teal);background:var(--teal);color:#fff}
+.tabc .tx{border:none;background:rgba(0,0,0,.08);border-radius:50%;width:16px;height:16px;line-height:14px;font-size:11px;cursor:pointer;color:inherit;flex:none}
+.tabc.on .tx{background:rgba(255,255,255,.25)}
+/* ================= preview (OVERDOOR design) ================= */
+.pv{font-size:10.5px;line-height:1.75;color:var(--dark)}
+.pv .header{display:flex;justify-content:space-between;align-items:center;padding-bottom:12px;border-bottom:3px solid var(--teal);margin-bottom:20px}
+.pv .logo{display:flex;align-items:center;gap:12px}
+.pv .mark{position:relative;width:40px;height:40px}
+.pv .sq{position:absolute;border-radius:9px}
+.pv .sq.t{width:32px;height:32px;left:0;top:0;background:var(--teal)}
+.pv .sq.y{width:20px;height:20px;left:10px;top:16px;background:var(--yellow)}
+.pv .wm{font-weight:900;font-size:17px;letter-spacing:5px}
+.pv .tag{font-size:8px;letter-spacing:3px;color:var(--teal);margin-top:1px}
+.pv .jd{border:2px solid var(--teal);border-radius:7px;color:var(--teal);font-weight:800;font-size:13px;letter-spacing:6px;padding:8px 16px 8px 22px}
+.pv .company{display:flex;align-items:center;gap:8px;color:var(--teal);font-weight:800;font-size:12.5px;margin-bottom:4px}
+.pv .company::before{content:"";width:12px;height:12px;border-radius:3px;background:var(--yellow);display:inline-block;flex:none}
+.pv h1{font-size:19px;font-weight:900;margin-bottom:4px}
+.pv .catch{color:#5c7681;font-size:9.5px;margin-bottom:4px}
+.pv table{border-collapse:collapse;width:100%}
+.pv th,.pv td{border:1px solid var(--border);padding:6px 12px;vertical-align:top;text-align:left;font-weight:normal}
+.pv th{background:var(--label-bg);font-weight:700}
+.pv .basic{margin-top:12px}
+.pv .basic th{width:13%;white-space:nowrap}
+.pv .basic td{width:37%}
+.pv .def th{width:17%}
+.pv .salary{background:var(--teal);border-radius:6px;color:#fff;margin-top:14px;padding:10px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.pv .pill{background:var(--yellow);color:var(--dark);font-weight:800;font-size:11px;border-radius:4px;padding:3px 12px;flex:none}
+.pv .sal-main{font-size:17.5px;font-weight:900;letter-spacing:.5px}
+.pv .sal-sub{font-size:10px;opacity:.95}
+.pv .section{margin-top:20px}
+.pv .sec-head{font-size:13px;font-weight:900;border-left:6px solid var(--teal);border-bottom:3px solid var(--yellow);padding:2px 0 6px 12px;margin-bottom:12px;page-break-after:avoid}
+.pv .cards{display:flex;gap:14px}
+.pv .card{flex:1;border-radius:6px;overflow:hidden}
+.pv .card-head{font-weight:800;font-size:11.5px;padding:6px 14px}
+.pv .tc{border:1.5px solid var(--teal)}
+.pv .tc .card-head{background:var(--teal);color:#fff}
+.pv .yc{border:1.5px solid var(--yellow)}
+.pv .yc .card-head{background:var(--yellow);color:var(--dark)}
+.pv .card-body{padding:8px 14px 10px}
+.pv .disclaimer{margin-top:26px;padding-top:8px;border-top:1px solid var(--border);color:#6b8089;font-size:8.5px;line-height:1.9}
+.pv .footbar{margin-top:10px;background:var(--dark);border-radius:5px;color:#fff;display:flex;justify-content:space-between;align-items:center;padding:8px 16px;font-size:9px}
+.pv .footbar .fl{font-weight:900;letter-spacing:4px;font-size:11px}
+.pv .footbar .fl .y{color:var(--yellow)}
+.pv a{color:var(--teal);text-decoration:underline;word-break:break-all}
+.jobdoc + .jobdoc{break-before:page;page-break-before:always;margin-top:40px;border-top:2px dashed var(--border);padding-top:40px}
+@media print{.jobdoc + .jobdoc{margin-top:0;border-top:none;padding-top:0}}
+/* ================= print ================= */
+@page{size:A4;margin:15mm 14mm}
+@media print{
+  body{background:#fff}
+  .appbar,.editor{display:none!important}
+  .wrap,.stage{display:block;padding:0}
+  .sheet{width:auto;min-height:0;box-shadow:none;padding:0}
+  .pv,.pv *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+
+body{background:#eef3f5}
+.vwrap{max-width:860px;margin:0 auto;padding:18px 10px 40px}
+.vbar{display:flex;justify-content:flex-end;margin-bottom:10px}
+.vwrap .sheet{width:auto;min-height:0;padding:42px 38px}
+@media (max-width:640px){.vwrap .sheet{padding:20px 14px}.pv .cards{flex-direction:column}}
+@media print{.vbar{display:none}.vwrap{padding:0;max-width:none}.vwrap .sheet{box-shadow:none;padding:0}}
+</style></head><body>
+<div class="vwrap">
+  <div class="vbar"><button class="btn btn-print" onclick="window.print()">🖨 印刷 / PDF保存</button></div>
+  <div class="sheet"><div class="pv">
+    <div class="header"><div class="logo"><div class="mark"><span class="sq t"></span><span class="sq y"></span></div>
+      <div><div class="wm">OVER DOOR</div><div class="tag">“働く”の可能性を、もっと楽しく</div></div></div>
+      <div class="jd">JOB DESCRIPTION</div></div>
+    <div class="company">株式会社ワークポート</div>
+    <h1>首都圏／北海道／名古屋／大阪／福岡</h1>
+    <div class="catch">【首都圏／北海道／名古屋／大阪／福岡】人物重視！人と企業の「ありたい未来」をつなぐ！充実の教育体制で未経験からキャリア支援のプロを目指せる CA・ RA</div>
+    <table class="basic"><tr><th>業種</th><td>人材紹介</td><th>雇用形態</th><td>正社員</td></tr><tr><th>職種</th><td>キャリアコンサルタント・キャリアアドバイザー、フィールドセールス（法人向け）</td><th>採用ポジション</th><td>中途採用</td></tr><tr><th>設立年</th><td>2003 年</td><th>職位</th><td>メンバー</td></tr><tr><th>従業員数</th><td>1001 ~ 5000 名</td><th>最終学歴</th><td>高卒以上</td></tr><tr><th>上場区分</th><td>未上場</td><th>職種経験</th><td>職種未経験 OK</td></tr><tr><th>勤務地</th><td>東京、東京、東京、愛知、大阪、大阪、福岡、北海道、北海道、埼玉、千葉、神奈</td><th>業種経験</th><td>業種未経験 OK 川、福岡</td></tr></table>
+    <div class="salary"><span class="pill">想定年収</span><span class="sal-main">420 万円〜 600 万円</span><span class="sal-sub">月給：26 万円〜 35.9 万円</span></div><div class="section"><div class="sec-head">どのような人を求めているか</div>
+    <div class="cards">
+      <div class="card tc"><div class="card-head">必要条件</div><div class="card-body">  必須条件   ・ QA ズレがなく、結論ファーストで話せる方<br>・社会人経験 1 年以上・自身の実績や強みをこれから「人材業界、人材紹介」でどう活かしていくかが言語化でき<br>・顧客折衝経験（販売・接客・営業など、顧客対応経験があれば可）ている方<br>※ 必須条件を満たさなくても、推薦理由次第で通過実績あり・営業として数値を追っていく意識があり、定量的な数値を用いて話すことができる方<br>・他社から学ぼうという姿勢、素直さがある方<br>〜例えばこんな方〜・変化を楽しめる方<br>教員、塾講師、ホテルフロントスタッフなど、マルチタスクのご経験のある方は多数内定実・自ら改善、提案する意欲や工夫ができる方<br>績あり！・ワークポートのパーパス・バリューズに共感いただける方<br>https:// www.workport.co.jp/ corporate/ purpose.html<br>  歓迎条件（エリア別）  <br>北海道・東北エリア（札幌/ 千歳）<br>L 飲食・スーパー等の販売・接客経験<br>関東エリア（東京/ 千葉/ 埼玉）<br>L 数字目標を追った経験をお持ちの方<br>関西エリア（大阪）<br>L 業界や職種問わず、顧客折衝経験をお持ちの方<br>中部エリア（名古屋）<br>L 販売、教員、塾講師、製造業<br>L お客様とコミュニケーションを取った経験<br>九州・沖縄エリア（天神）<br>L 営業・販売・接客・公務員 (教員等)<br>L お客様や社内で複数人と協働した経験</div></div>
+      <div class="card yc"><div class="card-head">内定の可能性が高い人</div><div class="card-body"></div></div>
+    </div></div><div class="section"><div class="sec-head">求人概要</div>
+      <table class="def"><colgroup><col style="width:17%"><col></colgroup>
+      <tr><th>事業内容と今後の事業展開</th><td>人材紹介サービス（有料職業紹介事業 許可番号： 13- ユ-040590）<br>人材育成サービス<br>公共事業受託サービス</td></tr><tr><th>募集背景</th><td>増員募集 / 更なる組織強化 / 新規部署立ち上げ<br>PR ポイント   ワークポートはここが安心！<br>① 研修・サポート体制が手厚い<br>② 透明な評価制度＆インセンティブ<br>③ 長期就業しやすい環境<br>  ワークポートで安心して働ける理由はこちら！<br>■ 急成長企業<br>売上高前年比 119.1%（2025 年度）。急速に成長を続けており、役職やポジションのチャンスが豊富です。<br>■ 若手が活躍できる社風<br>リーダー以上の役職者のうち 20 代の割合 51.3% (2026 年 4 月時点／契約社員・パート・出向者除く)。<br>入社歴や年齢に関わらず昇進可能で、称賛し合うカルチャーや「5 つのバリューズ」に基づいた行動指針で切磋琢磨できる環境です。<br>■ 地元勤務を実現可能<br>全国転勤あり／なしのコース選択制。 UI ターン歓迎で、地元に根ざしたキャリア形成も可能です。<br>■ 長期就業に最適な環境<br>年間休 日 124 日 （2026 年度）。育休復帰率 100%（2025 年度、男性取得実績もあり）。ライフステージが変わっても安心して働き続<br>けられます。<br>■ 教育研修が充実<br>研修専門部門による入社研修を全国同時に実施。同期と一緒に座学やロールプレイングを行い、テストや振り返りを通じてスムーズ<br><br>に現場へキャッチアップできます。<br>■ 透明な評価制度と高水準のインセンティブ<br>年齢や経験に依存しないフェアな評価制度。社員の約 8 割が昇給（2026 年 4 月の給与改定時）。<br>インセンティブ実績例：年間 215 万円（上位 5 名平均／ 2025 年度）、月次最大 6 万円、四半期・友人紹介インセンティブは上限なし、<br>グレード定額手当最大 7 万円。</td></tr><tr><th>この求人の魅力</th><td>（理念・ビジョン）<br>私達は会社の存在意義として、「限りなく誠実に、極めて合理的に。人と企業をありたい未来へつなぐ。」というパーパスを掲げて<br>います。<br>転職希望者様、採用企業様の伴走者として、人と企業を最適に結びつけ、働く喜びや企業成長をもたらすために、<br>どこまでも誠実に、徹底して合理的に、お客様に寄り添っていきたいと私たちは考えています。<br>（仕事・事業）<br>「ワークポート」は、人材紹介専業の総合転職エージェントです。<br>『「社会」という名の大海原に羽ばたくお手伝いをし、キャリアを見直すときにまた戻ってきていただける。そんなキャリアの港の<br>ようなインフラを創りたい』という想いを社名に込め、 2003 年に設立しました。<br>これまで多くの転職希望者様、企業様の転職、採用に寄り添い、ときに支えられながら歩んでまいりました。<br>昨今、あらゆる領域において深刻な人材不足が課題として浮かび上がり、多くの企業は人材獲得に苦戦を強いられています。<br>私たちは人材紹介事業に携わる者として、社会や企業のニーズを的確に捉え、経済発展に貢献できる人材を適所にマッチングさせて<br>いくという大きな使命を与えられていると感じております。<br>都市圏における人材紹介会社の認知度や利用率は徐々に上昇傾向にあるものの、地方においてはまだまだ低い現状です。<br>弊社では、雇用面の地域格差を 生 むことなく、どのエリアにおいても隈なく雇用機会を創出していくために、全国に拠点を展開して<br>おります。<br>さらに大きな『日 本中の隅々まで雇用機会を創出する』という使命を達成するために、一緒に働いてくれる仲間を現在様々なエリア<br>で募集しています。<br>（働く人・社風）<br>『称賛 ( 喜びをシェア ) し合う』<br>永年勤続表彰制度、累積貢献表彰制度、四半期表彰制度で頑張った社員を表彰しています。初めて成果を出した社員や、目標を大幅<br>に達成した社員などへのインタビュー記事が社内報で掲載され、成果や喜びを称賛し合う文化があります。また、社員自ら所属部門<br>についての嬉しいトピックを全社に発信したり、教育や研修を行っている部署から、有益な情報が提供されたり、お客様からの嬉し<br>いお言葉が全社共有されたりするなど、様々な情報をシェアし合う文化があります。<br>（給与・待遇）<br>社歴や年齢、役職等に一切関係なく、成果を上げた方をしっかりと評価したいと考えており、数値に基づいたクリアな人事評価制度<br>を整えています。<br>＜グレード制度＞<br>グレードは 17 段階あり、実績に基づいて四半期毎に変動し、定額手当や達成インセンティブの支給があります。グレードの設定目標<br>は、ノルマや予算ではなく、社員個人毎に設定されたものです。<br>※ 月次達成インセンティブは最大月 6 万円／定額手当は最大月 7 万円／四半期達成インセンティブは上限設定なし<br>＜年 2 回の給与改定＞<br>四半期毎に 1 枚作成いただく人事評価シートの平均点数に基づき、給与改定が行われます。売上以外の評価項目に関しては上司と相談<br>しながら個人毎に沿った目標を設定するため、しっかりと自身と向き合いながら、業務に取り組んでいただくことが可能です。<br>※2021 年 4 月〜 2022 年 10 月に実施された半年に 1 回の給与改定時、対象社員の約 80% が昇給実績あり</td></tr><tr><th>仕事内容</th><td>■ 個人営業 (キャリアアドバイザー)、 法人営業 (リクルーティングアドバイザー) の何れかの業務をお任せします。<br>※ どの業務を担当するかは面接及び研修での適性を見て判断します。<br>■ 個人営業 (キャリアアドバイザー)<br>求職者のパートナーとなり、転職活動のサポートを行う仕事です。<br>キャリアビジョンのヒアリング、希望条件の確認や面接対策など、<br>求職者の転職活動におけるあらゆる不安を解消し、人と企業を結びつける仕事です。<br>≪ 具体的には ≫<br>◇ 面談 (ヒアリング･ 求人企業紹介)<br>◇ 応募書類の添削<br>◇ 応募企業への書類推薦<br>◇ 書類選考の結果連絡<br>◇ 面接の 日 程調整<br>◇ 面接終了後のフォロー (感想のヒアリングなど)<br>◇ 面接後の感想をリクルーティングアドバイザーに共有<br>◇ 求人の再提案<br>◇ 進捗管理<br>◇ 求職者と企業のマッチング<br>◇ 各種雇用条件の交渉<br>■ 法人営業 (リクルーティングアドバイザー)<br>採用に取り組む法人顧客に対し、採用成功に向けた包括的なサポートを行います。<br>経営者や人事担当者に対する営業です。<br>担当顧客の事業を「人」の側面から支援できる面白みのある仕事です。<br>≪ 具体的には ≫<br>◇ 企業訪問<br>◇ 募集要件のヒアリング<br>◇ 応募書類の添削<br>◇ 面接対策<br>◇ 転職に向けた進捗管理<br>◇ 求職者と企業のマッチング<br>◇ 入社条件の確認、入社 日 を調整<br><br>※ 従事すべき仕事内容の変更の範囲：入社後、適性に応じてその他当社業務全般に変更の可能性があります。</td></tr><tr><th>現在の組織構成</th><td>部署の人数：<br>※ 部門や支社により人員構成は変動します。（数十名〜数百名）<br>※ 平均年齢 28.9 歳（2025 年度／グループ会社を除く）</td></tr><tr><th>給与・年収例</th><td>〈給与〉〈年収例〉<br>給与形態：月給制 (例 1)540 万円 入社 3 年目 27 歳 ／メンバー (基本給 33 万円 +イン<br>想定年収： 420 万円〜 600 万円センティブ 80 万円)<br>月給: 26 万円〜 35.9 万円 (例 2)600 万円 入社 3 年目 28 歳 ／シニアリーダー (基本給 42.8<br>賞与回数： 4 回万円マネジメントは基本給のみ)<br>昨年度賞与実績：２ヶ月分 (例 3)630 万円 入社 5 年目 29 歳 ／リーダー (基本給 38 万円 +イン<br>インセンティブ：ありセンティブ 100 万円)<br>〈補足情報〉<br>〈補足情報〉<br>月給 ¥260,000 〜 基本給 ¥198,000 〜 固定残業代 ¥62,000 〜を含む/ 月<br>※ 年収は（月給 ×14 か月）＋インセンティブ込みの想定です。<br>■ 残業手当：固定残業代制 ※ 超過分別途支給<br>固定残業代の相当時間: 45.0 時間/ 月<br>■ 賞与実績: 年 4 回（各 0.5ヶ月分） ※ 別途決算賞与有<br>■ 試用期間： 3ヶ月 ※ 試用期間中は月給マイナス 1 万円となります。 詳細な金額は面談時にお伝えします。<br>【インセンティブなど】<br>■ インセンティブ年間支給額例：インセンティブ年間支給額例： 215 万円（上位 5 名平均/2025 年度）<br>月次インセンティブ (6 万円まで) 1 四半期インセン ティブ (上限なし)<br>■ 友人紹介インセンティブ (上限なし) グレード定額手当 (7 万円まで)<br>■ 四半期 MVP/ VP/ BP 賞金<br>■ 四半期 MVU/ VU 賞金<br>■ 永年勤続表彰手当</td></tr><tr><th>勤務地・勤務時間</th><td>〈勤務地〉〈勤務時間〉<br>＜アクセス一覧＞ 09:00 〜 18:00<br>https:// www.workport.co.jp/ aboutus/ access_list.html 夜間勤務：なし<br>月間平均残業時間： 30 時間以下<br>【東京】<br>※ 適性によりいずれかに配属となります。（お住まいから 90 分<br>圏内の支社にて配属）<br>＜池袋＞<br>東京都豊島区東池袋 3-1-1 サンシャイン 60 22F<br>＜渋谷＞<br>東京都渋谷区桜丘町 3-2 渋谷サクラステージ SAKURA タワー<br>11F<br>＜汐留＞<br>東京都港区東新橋 1-8-3 汐留エッジ 4F<br>【千葉】<br>千葉県千葉市中央区弁天 1-15-3<br>リードシー千葉駅前ビル 7F<br>【埼玉】<br>埼玉県さいたま市大宮区宮町 2-35<br>大宮 MT ビル 2F<br>【神奈川】<br>＜横浜支社＞<br>神奈川県横浜市西区高島 1-2-13<br>LG YOKOHAMA INNOVATION CENTER 13F<br>【北海道】<br>※ 適性によりいずれかに配属となります。（お住まいから 90 分<br>圏内の支社にて配属）<br>＜札幌＞<br>北海道札幌市北区北七条西 2-15-1 野村不動産札幌ビル 3F<br>＜千歳＞<br>北海道千歳市千代田町 6-7-3 リレントビル 2F<br>【名古屋】<br>愛知県名古屋市西区牛島町 6-1 名古屋ルーセントタワー 5F<br>【大阪】<br>※ 適性によりいずれかに配属となります。（お住まいから 90 分<br>圏内の支社にて配属）<br>＜梅田＞<br>大阪府大阪市北区大深町 4-20 グランフロント大阪タワーＡ 22F<br>＜難波＞<br>大阪府大阪市浪速区難波中 2-10-70 パークスタワー 30F<br>【福岡】<br>＜天神支社＞<br><br>福岡県福岡市中央区天神 1-3-38<br>天神 121 ビル 5F<br>＜福岡本社＞<br>福岡県福岡市博<br>多区博多駅前 4-4-15 博多駅前 H44 ビル 7F<br>自社内勤務<br>転勤の可能性：可能性はあるが、最大限考慮<br>〈補足情報〉<br>■ 残業時間：営業は平均約 27 時間（2025 年度） ※ 事業部・拠点により変動します<br>■ 転勤：当面なし（コース選択制／オファー面談内で詳細説明）<br>◇ 全国 (転居を伴う転勤の可能性がある)<br>◇ 地域 (転居を伴う転勤の可能性が無い)<br>※ 最下限の賃金条件は、地域を選択した場合のものです。<br>※ 全国を選択された場合は、地域の月給額に 30,000 円加算されます。<br>※ コース区分は試用期間終了後の翌月に選択いただきます。（適用月は選択時期により変動）<br>【就業時間/ 休 日 休暇補足】<br>■ 就業時間 : 配属ポジション、 事業部 拠点により変動有<br>休 日 休暇・受動喫煙対策・福利厚 生 〈休 日 休暇〉〈受動喫煙対策〉<br>休 日：土 日 祝休み受動喫煙対策の有無：対策あり<br>年間休 日： 124 日 受動喫煙対策について: 禁煙<br>休暇制度：有給休暇、年末年始休暇、夏季休暇、慶弔休暇、産特記事項 : 屋内全面禁煙<br>休・育休、介護休暇、 GW 休暇<br>補足情報：・入社後 6ヶ月経過後の翌月 1 日 に 10 日 間付与<br>／年末年始休暇<br>／サンクス休暇<br>／夏季特別休暇 (有給休暇と土 日 合わせて 9 連休取得可能)<br>／慶弔休暇<br>／産前産後休業<br>／育児休業<br>／介護休業<br>※CA 配属の場合、 目安 1-2 日 程の土 日 祝出勤有 (振替休 日 有)、<br>RA 配属の場合は完全週休 2 日 制 (土・ 日・祝 日)<br>〈福利厚 生・諸手当〉<br>社会保険完備、健康診断、交通費支給<br>補足情報：・副業 OK (一部従業員利用可)<br>／短時間勤務制度 (育児・介護)/ 全従業員利用<br>／出産・育児支援制度 (全従業員利用可)<br>／選択制確定拠出年金制度<br>／転勤者旅費補助制度<br>／雇用形態選択制度<br>【各種制度など】<br>■ 定期健康診断<br>■ 永年勤続表彰制度累積貢献表彰制度<br>■ 四半期 MVP/ VP/ BP 表彰<br>■ 四半期 MVU/ VU 表彰<br>■ 個人面談<br>■ タレントワーク制度 (副業)/ 一部従業員利用可<br>■ 時差出勤<br>【研修制度詳細】<br>■ 入社後研修 研修部門にて、全国の中途入社の同期と共に、研修を実施。テストにて知識の習得度を確認。<br>現場配属後スムーズにキャッチアップできるよう、配属部署とも 日々振り返りを行います。</td></tr></table></div><div class="section"><div class="sec-head">選考情報</div>
+      <table class="def"><colgroup><col style="width:17%"><col></colgroup>
+      <tr><th>選考フロー</th><td>履歴書の提出: 必須 ■ 選考フロー<br>職務経歴書の提出: 必須書類選考 → 一次面接 → 最終面接＋タイピングテスト<br>カジュアル面談の有無 : なし<br>会社説明会の有無: なし<br>適性テストの有無: あり</td></tr><tr><th>補足情報</th><td>筆記試験: 無</td></tr></table></div><div class="section"><div class="sec-head">会社情報</div>
+      <table class="def"><colgroup><col style="width:17%"><col></colgroup>
+      <tr><th>会社名</th><td>株式会社ワークポート<br>会社 HP https:// www.workport.co.jp/ corporate/</td></tr><tr><th>本社所在地</th><td>東京都 品川区東品川２丁目２番４号 天王洲ファーストタワー６ F</td></tr><tr><th>業種</th><td>人材紹介</td></tr><tr><th>設立年</th><td>2003 年</td></tr><tr><th>従業員数</th><td>1001 ~ 5000 名</td></tr><tr><th>上場区分</th><td>未上場</td></tr><tr><th>平均年齢</th><td>28.9 歳<br>男 女 比率</td></tr></table></div><div class="section"><div class="sec-head">発行者</div>
+    <table class="def"><colgroup><col style="width:17%"><col></colgroup>
+    <tr><th>事業者名</th><td>株式会社OVER DOOR</td></tr>
+    <tr><th>有料職業紹介許可番号</th><td>23-ユ-302895</td></tr></table></div>
+    <div class="disclaimer">
+      <div>※応募意思を頂いた段階で、求人企業へ特定個人情報の開示がされますことも、予めご了承ください。</div>
+      <div>・本求人票に記載されている労働条件等の情報は、労働契約締結時の労働条件と異なる場合がありますので、ご相談いただけますと幸いです。</div>
+      <div>・本求人票には一般には公開されていない情報も含まれておりますので、第三者への提供・転送を禁止させて頂いております。</div>
+    </div>
+    <div class="footbar"><div class="fl">OVER <span class="y">DOOR</span></div>
+      <div>“働く”の可能性を、もっと楽しく　｜　株式会社OVER DOOR（有料職業紹介許可番号 23-ユ-302895）</div></div></div></div>
+</div></body></html>
