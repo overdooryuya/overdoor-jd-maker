@@ -1,0 +1,150 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>GROOVE X株式会社｜正解のない市場へ挑む！LOVOT法人営業チームマネージャー候補｜OVERDOOR求人票</title>
+<style>
+:root{
+  --teal:#38A4BB; --yellow:#E0D224; --dark:#253F48;
+  --label-bg:#E9F3F6; --border:#DCE5E9;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP","Yu Gothic",Meiryo,sans-serif;color:var(--dark);background:#eef3f5}
+/* ================= app layout ================= */
+.appbar{background:var(--dark);color:#fff;padding:10px 20px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:50}
+.appbar .lg{font-weight:900;letter-spacing:4px}
+.appbar .lg .y{color:var(--yellow)}
+.appbar .sub{font-size:12px;opacity:.85}
+.appbar .spacer{flex:1}
+.btn{border:none;border-radius:6px;padding:9px 18px;font-weight:800;font-size:13px;cursor:pointer}
+.btn-print{background:var(--yellow);color:var(--dark)}
+.btn-ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.4)}
+.wrap{display:flex;gap:0;align-items:flex-start}
+.editor{width:460px;flex:none;background:#fff;border-right:1px solid var(--border);min-height:calc(100vh - 50px);padding:16px 18px 60px}
+.stage{flex:1;padding:24px;display:flex;justify-content:center}
+.sheet{background:#fff;width:794px;min-height:1123px;box-shadow:0 2px 16px rgba(37,63,72,.18);padding:57px 53px}
+/* ================= editor ================= */
+.drop{border:2px dashed var(--teal);border-radius:10px;background:#f2fafc;padding:18px;text-align:center;color:var(--teal);font-size:13px;font-weight:700;cursor:pointer;transition:.15s}
+.drop.on{background:#dff2f7}
+.drop input{display:none}
+.drop small{display:block;font-weight:400;color:#5c7681;margin-top:4px}
+.pastewrap{margin-top:8px;border:1.5px solid var(--border);border-radius:10px;padding:10px;background:#fbfdfe}
+.pw-label{font-size:12px;font-weight:800;color:var(--teal);margin-bottom:6px}
+textarea.pastebox{width:100%;height:64px;font-size:11px;border:1px solid var(--border);border-radius:6px;padding:8px;resize:vertical;font-family:inherit}
+.btn-parse{margin-top:6px;border:none;border-radius:6px;background:var(--teal);color:#fff;font-weight:800;font-size:12.5px;padding:8px 18px;cursor:pointer}
+.btn-parse:hover{opacity:.9}
+.parse-note{font-size:11px;color:#946f00;background:#fdf7dc;border-radius:6px;padding:8px 10px;margin-top:8px;display:none}
+.ed-h{font-size:12.5px;font-weight:900;border-left:5px solid var(--teal);padding-left:8px;margin:20px 0 8px}
+.f{margin-bottom:8px}
+.f label{display:block;font-size:11px;font-weight:700;color:#41626e;margin-bottom:2px}
+.f input,.f textarea{width:100%;border:1px solid var(--border);border-radius:5px;padding:6px 8px;font-size:12px;font-family:inherit;color:var(--dark)}
+.f textarea{min-height:54px;resize:vertical;line-height:1.6}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px}
+.rowitem{border:1px solid var(--border);border-radius:7px;padding:8px;margin-bottom:8px;background:#fbfdfe}
+.rowitem .rhead{display:flex;gap:6px;margin-bottom:4px}
+.rowitem .rhead input{flex:1;font-weight:700}
+.mini{border:none;background:#e7eef1;color:#41626e;border-radius:5px;font-size:11px;padding:4px 8px;cursor:pointer;font-weight:700}
+.mini:hover{background:#d6e4e9}
+.mini.del{color:#a33}
+.addbar{margin:4px 0 14px}
+.sec-ed{border:1px solid var(--border);border-left:4px solid var(--teal);border-radius:8px;padding:10px;margin-bottom:12px;background:#fff}
+.sec-ed>.shead{display:flex;gap:6px;margin-bottom:8px}
+.sec-ed>.shead input{flex:1;font-weight:900;font-size:13px;border:1px solid var(--border);border-radius:5px;padding:5px 8px}
+.hint{font-size:11px;color:#5c7681;line-height:1.7;margin-top:6px}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0}
+.tabc{display:flex;align-items:center;gap:6px;border:1.5px solid var(--border);border-radius:20px;padding:4px 8px 4px 14px;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:#41626e;max-width:200px}
+.tabc .tl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tabc.on{border-color:var(--teal);background:var(--teal);color:#fff}
+.tabc .tx{border:none;background:rgba(0,0,0,.08);border-radius:50%;width:16px;height:16px;line-height:14px;font-size:11px;cursor:pointer;color:inherit;flex:none}
+.tabc.on .tx{background:rgba(255,255,255,.25)}
+/* ================= preview (OVERDOOR design) ================= */
+.pv{font-size:10.5px;line-height:1.75;color:var(--dark)}
+.pv .header{display:flex;justify-content:space-between;align-items:center;padding-bottom:12px;border-bottom:3px solid var(--teal);margin-bottom:20px}
+.pv .logo{display:flex;align-items:center;gap:12px}
+.pv .mark{position:relative;width:40px;height:40px}
+.pv .sq{position:absolute;border-radius:9px}
+.pv .sq.t{width:32px;height:32px;left:0;top:0;background:var(--teal)}
+.pv .sq.y{width:20px;height:20px;left:10px;top:16px;background:var(--yellow)}
+.pv .wm{font-weight:900;font-size:17px;letter-spacing:5px}
+.pv .tag{font-size:8px;letter-spacing:3px;color:var(--teal);margin-top:1px}
+.pv .jd{border:2px solid var(--teal);border-radius:7px;color:var(--teal);font-weight:800;font-size:13px;letter-spacing:6px;padding:8px 16px 8px 22px}
+.pv .company{display:flex;align-items:center;gap:8px;color:var(--teal);font-weight:800;font-size:12.5px;margin-bottom:4px}
+.pv .company::before{content:"";width:12px;height:12px;border-radius:3px;background:var(--yellow);display:inline-block;flex:none}
+.pv h1{font-size:19px;font-weight:900;margin-bottom:4px}
+.pv .catch{color:#5c7681;font-size:9.5px;margin-bottom:4px}
+.pv table{border-collapse:collapse;width:100%}
+.pv th,.pv td{border:1px solid var(--border);padding:6px 12px;vertical-align:top;text-align:left;font-weight:normal}
+.pv th{background:var(--label-bg);font-weight:700}
+.pv .basic{margin-top:12px}
+.pv .basic th{width:13%;white-space:nowrap}
+.pv .basic td{width:37%}
+.pv .def th{width:17%}
+.pv .salary{background:var(--teal);border-radius:6px;color:#fff;margin-top:14px;padding:10px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.pv .pill{background:var(--yellow);color:var(--dark);font-weight:800;font-size:11px;border-radius:4px;padding:3px 12px;flex:none}
+.pv .sal-main{font-size:17.5px;font-weight:900;letter-spacing:.5px}
+.pv .sal-sub{font-size:10px;opacity:.95}
+.pv .section{margin-top:20px}
+.pv .sec-head{font-size:13px;font-weight:900;border-left:6px solid var(--teal);border-bottom:3px solid var(--yellow);padding:2px 0 6px 12px;margin-bottom:12px;page-break-after:avoid}
+.pv .cards{display:flex;gap:14px}
+.pv .card{flex:1;border-radius:6px;overflow:hidden}
+.pv .card-head{font-weight:800;font-size:11.5px;padding:6px 14px}
+.pv .tc{border:1.5px solid var(--teal)}
+.pv .tc .card-head{background:var(--teal);color:#fff}
+.pv .yc{border:1.5px solid var(--yellow)}
+.pv .yc .card-head{background:var(--yellow);color:var(--dark)}
+.pv .card-body{padding:8px 14px 10px}
+.pv .disclaimer{margin-top:26px;padding-top:8px;border-top:1px solid var(--border);color:#6b8089;font-size:8.5px;line-height:1.9}
+.pv .footbar{margin-top:10px;background:var(--dark);border-radius:5px;color:#fff;display:flex;justify-content:space-between;align-items:center;padding:8px 16px;font-size:9px}
+.pv .footbar .fl{font-weight:900;letter-spacing:4px;font-size:11px}
+.pv .footbar .fl .y{color:var(--yellow)}
+.pv a{color:var(--teal);text-decoration:underline;word-break:break-all}
+.jobdoc + .jobdoc{break-before:page;page-break-before:always;margin-top:40px;border-top:2px dashed var(--border);padding-top:40px}
+@media print{.jobdoc + .jobdoc{margin-top:0;border-top:none;padding-top:0}}
+/* ================= print ================= */
+@page{size:A4;margin:15mm 14mm}
+@media print{
+  body{background:#fff}
+  .appbar,.editor{display:none!important}
+  .wrap,.stage{display:block;padding:0}
+  .sheet{width:auto;min-height:0;box-shadow:none;padding:0}
+  .pv,.pv *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+
+body{background:#eef3f5}
+.vwrap{max-width:860px;margin:0 auto;padding:18px 10px 40px}
+.vbar{display:flex;justify-content:flex-end;margin-bottom:10px}
+.vwrap .sheet{width:auto;min-height:0;padding:42px 38px}
+@media (max-width:640px){.vwrap .sheet{padding:20px 14px}.pv .cards{flex-direction:column}}
+@media print{.vbar{display:none}.vwrap{padding:0;max-width:none}.vwrap .sheet{box-shadow:none;padding:0}}
+</style></head><body>
+<div class="vwrap">
+  <div class="vbar"><button class="btn btn-print" onclick="window.print()">🖨 印刷 / PDF保存</button></div>
+  <div class="sheet"><div class="pv">
+    <div class="header"><div class="logo"><div class="mark"><span class="sq t"></span><span class="sq y"></span></div>
+      <div><div class="wm">OVER DOOR</div><div class="tag">“働く”の可能性を、もっと楽しく</div></div></div>
+      <div class="jd">JOB DESCRIPTION</div></div>
+    <div class="company">GROOVE X株式会社</div>
+    <h1>正解のない市場へ挑む！LOVOT法人営業チームマネージャー候補</h1>
+    <div class="catch">正解のない市場へ挑む！LOVOT法人営業チームマネージャー候補</div>
+    <table class="basic"><tr><th>業種</th><td>インターネットサービス（ EC/ メディア / アプリ）</td><th>雇用形態</th><td>正社員</td></tr><tr><th>設立年</th><td>2008 年 5 月</td><th style="background:#fff"></th><td></td></tr><tr><th>従業員数</th><td>282 名<br>‧ 本求人票で明示する労働条件等の内容が、労働契約締結時の労働条件と異なることがあります。<br>‧ 本資料には、一般に公開されない情報も含まれるため、第三者への提供 ‧ 転送は禁止とさせていただきます。<br>求人 id ：   c           b-ad     -       d-ad     -   ae   d   f   d   ad</td><th style="background:#fff"></th><td></td></tr></table>
+    <div class="salary"><span class="pill">想定年収</span><span class="sal-main">700 万円〜 1000 万円</span></div><div class="section"><div class="sec-head">どのような人を求めているか</div>
+    <div class="cards">
+      <div class="card tc"><div class="card-head">必要条件</div><div class="card-body">応募要件（ MUST ）<br>製造業界または物流業界に対する下記いずれかの経験<br>IT コンサルティングの経験<br>組織人事コンサルティングの経験<br>無形商材の営業経験<br>顧客の組織課題や事業課題に対し、解決策を提案 ‧ 実行支援した経験<br>決裁権者（役員 ‧ 部長級）を含む複数のステークホルダーの合意形成を行った経験<br>経営層や責任者クラスに対するコンペティション、プレゼンテーション経験<br>応募要件（ WANT ）<br>官公庁や地方自治体との折衝経験<br>事業会社における営業部門のマネジメント経験（部門責任者クラス）<br>事業戦略に基づいた売上計画の策定、および PL （損益計算書）の管理 ‧ 分析経験<br>ABM （アカウント ‧ ベースド ‧ マーケティング）を用いた戦略的なターゲット攻略経験<br>人事 ‧ HR 領域に関する知見、または人事部門への課題解決提案の経験<br>Saas 、 ERP 、基幹システム、タレントマネジメントシステムなどに関する知見<br>歓迎する人物像（ WANT)<br>当社の [ パーパス / ビジョン / バリュー ](<a href="https://recruit.kaonavi.jp/about-us/" target="_blank" rel="noopener">https://recruit.kaonavi.jp/about-us/</a>) に共感し、体現できる<br>方<br>社内外問わずステークホルダーと協働し業務遂行が出来る方</div></div>
+      <div class="card yc"><div class="card-head">歓迎条件・求める人物像</div><div class="card-body"></div></div>
+    </div></div><div class="section"><div class="sec-head">求人概要</div>
+      <table class="def"><colgroup><col style="width:17%"><col></colgroup>
+      <tr><th>募集背景</th><td>事業概要<br>持続的な企業成長には生産性向上が不可欠であり、「人的資本経営」の重要性がかつてないほど高<br>まっています。その中核を担うのが「タレントマネジメント」です。本音の人材情報を活用し、個<br>人と組織の潜在能力を最大限に引き出すことで、企業はさらなる高みを目指せます。<br>カオナビは、個の力を最大化し、組織をより強くするためのタレントマネジメントシステムです。<br>人事業務の効率化から戦略人事の実現まで、幅広い目的に対応。人材データプラットフォームに蓄<br>積された個のデータを AI と掛け合わせることで、「個の力の最大化」による盤石な組織を築き、企<br>業の成長を力強く後押しします。<br>募集背景<br>当社は「 “ はたらく ” にテクノロジーを実装し、個の力から社会の仕様を変える」というパーパスの<br>もと、社員の個性 ‧ 才能を発掘し、戦略人事を加速させるタレントマネジメントシステム「カオナ<br>ビ」を提供しており、現在では 4,500 社以上（ 2025 年 9 月末時点）の企業 ‧ 団体にご利用いただい<br>ています。<br>中期経営方針の一つに “ 継続的な ARR （ Annual Recurring Revenue / 年間経常収益）の成長 ” を掲げ<br>ており、エンタープライズ企業数の増加により ARPU （ Average Revenue Per User /   ユーザーあた<br>りの平均売上金額）の向上を目指しています。<br>企業ニーズに応えた機能やオンボーディングコンテンツを活用しながら、ドライバーとしてご活躍<br>いただけるエンタープライズセールスを募集いたします。</td></tr><tr><th>ポジションの魅力</th><td>‧ 貢献範囲が大きく価値のあるプロダクトを提供できる<br>トヨタや本田技研工業などの大手企業、経済産業省などの中央省庁や地方自治体を含む公共領域ま<br>で、社会にインパクトを与える大きなビジネスに寄与できます。<br>大手企業固有の人事課題に対応し、経営課題 ‧ 事業課題を捉えて本質的な解決を図ります。開発サ<br>イドと密に連携し、企業を根底から変える取り組みに携われます。<br>労務管理や経営管理と人材管理とを組み合わせた、幅広いソリューションの複合的な提案が可能で<br>す。<br>‧ 正解のない / 未成熟のエンタープライズ攻略を体系立って学ぶことができる<br>顧客によって異なるニーズをヒアリングによって言語化し、最適解を提案していく " コンサルティ<br>ングセールススキル " や、経営課題に紐づく人事課題を扱うからこそ必要となる、 " 経営 ‧ 事業とい<br>う視座の高さ " など、タレントマネジメント領域特有のスキルが身につきます。<br>人的資本の情報開示が義務化されたことによる需要増加で豊富なリード数があります。案件事例、<br>商談ログ、デモ動画などをコンテンツとして見える化し、 “ 誰もが売れる仕組み ” 案件事例や商談ロ<br>グなどのアセット活用、メンティー制度を通じて効率的にスキルアップできます。<br>‧ 挑戦を後押しする柔軟な働き方 ― 「 My Work Style 制度」<br>スーパーフレックスタイムやスイッチワークなどの「 My Work Style 制度」を通じて、時間や場所<br>にとらわれず、自ら成果を出しにいく働き方を実現。制度は挑戦を支える手段であり、主体的に成<br>果を追求するカルチャーが根付いています。<br>‧ 成果に応じて広がるキャリアの選択肢<br>マネージャーや部長といった縦のキャリアに加え、他職種への挑戦も可能。社内公募制度「ハンズ<br>アップ制度」により、社員自らが新たなフィールドに手を挙げて挑戦できる環境が整っています。<br>成果と意志を軸に、多様なキャリアを描けます。<br>【メンバー紹介記事】<br>大手企業の変革を支援し、社会の「当たり前」をつくる。新生エンタープライズ組織の挑戦<br><br><a href="https://vivivi.kaonavi.jp/articles/fukuda-aoyagi-" target="_blank" rel="noopener">https://vivivi.kaonavi.jp/articles/fukuda-aoyagi-</a>             /<br>戦略的パートナーへの進化 ── 営業の “ 深さ ” が問われるエンタープライズ開拓の醍醐味<br><a href="https://vivivi.kaonavi.jp/articles/sugiyama-yoshida-" target="_blank" rel="noopener">https://vivivi.kaonavi.jp/articles/sugiyama-yoshida-</a>             /<br>我が子に誇れる仕事を ── 育児真っ只中の私が、カオナビで「全員で勝ちに行く」と決めた理由<br><a href="https://note.com/kaonavi/n/n" target="_blank" rel="noopener">https://note.com/kaonavi/n/n</a>     a     a       c   b<br>採用の “ 入口 ” から、生産性の “ 中核 ” へ ── 起業を考えていた私がカオナビに決めた理由<br><a href="https://note.com/kaonavi/n/n" target="_blank" rel="noopener">https://note.com/kaonavi/n/n</a>     b     b   fd     e<br>最適解は異なるからこそ面白い ── 組織変革に挑むエンタープライズセールス<br><a href="https://vivivi.kaonavi.jp/articles/yanai-yu-" target="_blank" rel="noopener">https://vivivi.kaonavi.jp/articles/yanai-yu-</a>             /</td></tr><tr><th>勤務地</th><td>東京都港区 1-8-1 赤坂インターシティ AIR     F<br>大阪府大阪市北区角田町 8-1 大阪梅田ツインタワーズ ‧ ノース 22F<br>愛知県名古屋市中村区名駅 1-1-1 JP タワー名古屋 21F<br>※ 勤務場所はオフィスもしくは自宅から選択することが可能です。<br>＜本社アクセス＞<br>東京メトロ銀座線 ‧ 南北線「溜池山王」駅直結<br>東京メトロ千代田線 ‧ 丸ノ内線「国会 議事堂前駅」直結<br>＜変更の範囲＞<br>本社及び全てのオフィス、自宅、その他就業場所 ( 会社の許可した就業に適した場所 ) 、出向先 ‧ 転<br>籍先会社の全てのオフィス</td></tr><tr><th>勤務条件</th><td>雇用形態 正社員<br>年収の目安 700 万円〜 1000 万円<br>年収 7,000,000 円 - 10,000,000 円<br>※ 1 ）インセンティブ制度あり（半期の個人評価をもとに年 2 回支給）<br>※ 2 ）上記は想定レンジです。ご希望と経験 ‧ 能力等を考慮し、当社規定により支給いたします。<br>勤務時間 ‧ スーパーフレックス<br>コアタイム：なし<br>フレキシブルタイム： 5:00-22:00<br>※ 1 日 4 時間以上の就業、および月の所定労働時間以上の就業は必要<br>休日 ‧ 休暇 【休日】<br>‧ 完全週休 2 日制（土日）祝日<br>‧ 年間休日 123 日<br>【休暇】<br>‧ 年次有給休暇<br>‧ カオナビ休暇（ 3 日間 ‧ 通年）<br>‧ 年末年始休暇<br>‧ 慶弔休暇<br>福利厚生 ‧ 保険 福利厚生<br>‧ 交通費支給（月上限 3 万円）<br>‧ 確定拠出年金制度<br>‧ カオナビ従業員持株会<br>‧ 産前産後休暇制度<br>‧ 育児休暇制度（男女ともに取得実績あり）<br>加入保険<br>‧ 厚生年金<br>‧ 健康保険<br>‧ 雇用保険<br>‧ 労災保険<br>受動喫煙対策<br>‧ 屋内喫煙可能場所あり<br>My Work Style 制度 ※詳細は就業規則による<br>■ ハイブリット勤務<br>リモートワーク可能な場所は原則日本国内の自宅のみ<br>■ スーパーフレックス（コアタイム無し）<br>1 日あたり最低労働時間 4H- 、月間所定労働時間あり<br>■ スイッチワーク（中抜け可能）<br>役所や病院、お子様の送り迎えなど、都合に合わせて調整可能<br>■ ±20 時間<br>月所定労働時間に ±20 時間の幅を設け、各自で労働時間を調整することが可能<br><br>スキル＆キャリアサポート制度<br>■ テラコヤ<br>ナレッジ共有のための社員主催の勉強会<br>■ ドウジョウ<br>ロジカルシンキング研修など参加必須の社内研修<br>■ 兼業推奨<br>副業可能です<br>■ ハンズアップ制度<br>半期に１回、上司を通さずに他部署への異動希望を表明可能</td></tr></table></div><div class="section"><div class="sec-head">選考情報</div>
+      <table class="def"><colgroup><col style="width:17%"><col></colgroup>
+      <tr><th>選考フロー</th><td>選考フロー 書類選考 → 面接選考（ 2-3 回） → 内定<br>※ なお、状況により面接ステップは変わる可能性がありますので予めご了承ください。<br>※ 面接選考は基本的にオンラインでの実施となります。</td></tr></table></div><div class="section"><div class="sec-head">会社情報</div>
+      <table class="def"><colgroup><col style="width:17%"><col></colgroup>
+      <tr><th>企業名</th><td>株式会社カオナビ</td></tr><tr><th>業種</th><td>インターネットサービス（ EC/ メディア / アプリ）</td></tr><tr><th>本社所在地</th><td>東京都港区虎ノ門 1-3-1 東京虎ノ門グローバルスクエア 15F ‧ 16F</td></tr><tr><th>設立</th><td>2008 年 5 月</td></tr><tr><th>従業員数</th><td>282 名<br>‧ 本求人票で明示する労働条件等の内容が、労働契約締結時の労働条件と異なることがあります。<br>‧ 本資料には、一般に公開されない情報も含まれるため、第三者への提供 ‧ 転送は禁止とさせていただきます。<br>求人 id ：   c           b-ad     -       d-ad     -   ae   d   f   d   ad</td></tr></table></div><div class="section"><div class="sec-head">発行者</div>
+    <table class="def"><colgroup><col style="width:17%"><col></colgroup>
+    <tr><th>事業者名</th><td>株式会社OVER DOOR</td></tr>
+    <tr><th>有料職業紹介許可番号</th><td>23-ユ-302895</td></tr></table></div>
+    <div class="disclaimer">
+      <div>※応募意思を頂いた段階で、求人企業へ特定個人情報の開示がされますことも、予めご了承ください。</div>
+      <div>・本求人票に記載されている労働条件等の情報は、労働契約締結時の労働条件と異なる場合がありますので、ご相談いただけますと幸いです。</div>
+      <div>・本求人票には一般には公開されていない情報も含まれておりますので、第三者への提供・転送を禁止させて頂いております。</div>
+    </div>
+    <div class="footbar"><div class="fl">OVER <span class="y">DOOR</span></div>
+      <div>“働く”の可能性を、もっと楽しく　｜　株式会社OVER DOOR（有料職業紹介許可番号 23-ユ-302895）</div></div></div></div>
+</div></body></html>
