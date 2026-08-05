@@ -35,6 +35,8 @@ body{font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP","Yu 
 textarea.pastebox{width:100%;height:64px;font-size:11px;border:1px solid var(--border);border-radius:6px;padding:8px;resize:vertical;font-family:inherit}
 .btn-parse{margin-top:6px;border:none;border-radius:6px;background:var(--teal);color:#fff;font-weight:800;font-size:12.5px;padding:8px 18px;cursor:pointer}
 .btn-parse:hover{opacity:.9}
+.pw-bm{margin-top:8px;font-size:11px;color:#5c7681;line-height:1.7;border-top:1px dashed var(--border);padding-top:8px}
+.pw-bm a{display:inline-block;background:var(--yellow);color:var(--dark);font-weight:800;border-radius:5px;padding:3px 12px;text-decoration:none;cursor:grab}
 .parse-note{font-size:11px;color:#946f00;background:#fdf7dc;border-radius:6px;padding:8px 10px;margin-top:8px;display:none}
 .ed-h{font-size:12.5px;font-weight:900;border-left:5px solid var(--teal);padding-left:8px;margin:20px 0 8px}
 .f{margin-bottom:8px}
@@ -138,6 +140,9 @@ textarea.pastebox{width:100%;height:64px;font-size:11px;border:1px solid var(--b
     <div class="pw-label">🔗 URL・テキストの貼り付けでもOK（貼り付けると自動で読み込みます）</div>
     <textarea class="pastebox" id="pastebox" placeholder="例：株式会社◯◯ 🔷【ポジション名】～ https://circus-job.com/search/…&#10;（求人URL付きの紹介文や、求人票の全文テキストをそのまま貼り付け）"></textarea>
     <button class="btn-parse" onclick="parseFromPaste()">⤵ 読み込む</button>
+    <div class="pw-bm">⚡ ワンクリック取込：
+      <a id="bmlink" href="javascript:(function(){var t=document.body.innerText;var w=window.open('https://overdooryuya.github.io/overdoor-jd-maker/');var n=0;var i=setInterval(function(){try{w.postMessage({od_jd_text:t,od_src:location.href},'*')}catch(e){}if(++n>14){clearInterval(i)}},700)})();">OD求人票取込</a>
+      ← このリンクを<b>ブックマークバーにドラッグ</b>して登録。circus等の求人ページを開いて押すと、ページ全文が自動でここに取り込まれます</div>
   </div>
   <div class="tabs" id="tabs"></div>
   <div class="parse-note" id="parsenote"></div>
@@ -551,7 +556,8 @@ function cleanupText(raw){
     if(/^求人id\s*[：:]/i.test(t)) return false;
     if(/^発行者\s*[：:]/.test(t)) return false;
     if(/^出力日\s*[：:]/.test(t)) return false;
-    if(/^[・･]?本求人票(で明示|に記載)/.test(t)) return false;
+    if(/^[・･]?本求人票(で明示|に記載|に明記)/.test(t)) return false;
+    if(/^[・･]?本(資料|求人票)には一般に/.test(t)) return false;
     if(/^[・･]?本資料には/.test(t)) return false;
     return true;
   }).join("\n");
@@ -572,10 +578,13 @@ function parseText(raw){
     handleUrlMemo(text, urlMatch[0]);
     return;
   }
-  // フォーマット判定: 「求人情報」システム出力形式 or circus形式
+  // フォーマット判定: Crowd Agent形式 / 「求人情報」システム出力形式 / circus形式
   const head = text.trim().slice(0,60);
+  const isCrowdAgent = /Crowd\s*Agent/i.test(text) || (/求人票/.test(head) && text.includes("企業情報") && text.includes("求人情報") && text.includes("企業名"));
   const isExport = /^求人情報/.test(head.trim()) || (text.includes("企業概要") && text.includes("求人内容"));
-  if(isExport) parseExport(text); else parseCircus(text);
+  if(isCrowdAgent) parseCrowdAgent(text);
+  else if(isExport) parseExport(text);
+  else parseCircus(text);
   // フォールバック: ほぼ何も取れなかった場合は全文を1行に流し込む
   const gotRows = state.sections.some(s=>s.rows.some(r=>r[0].trim()&&r[1].trim()));
   if(!gotRows && !$("cl").value.trim()){
@@ -589,7 +598,7 @@ function parseText(raw){
 /* --- URL付き求人メモの取り込み --- */
 function handleUrlMemo(text, url){
   const lines = text.split("\n").map(s=>s.trim()).filter(Boolean);
-  const compLine = lines.find(l=>/(株式会社|合同会社|有限会社)/.test(l) && l.length<=40 && !l.startsWith("http"));
+  const compLine = lines.find(l=>/(株式会社|合同会社|有限会社)/.test(l) && l.length<=40 && !l.startsWith("http") && !/OVER\s*DOOR/i.test(l));
   if(compLine) $("company").value = compLine;
   // 🔷等の装飾付きタイトル行
   const titleLine = lines.find(l=>l!==compLine && !l.startsWith("http") && l.length>5);
@@ -607,6 +616,63 @@ function handleUrlMemo(text, url){
     `② 開いたページで <b>Ctrl+A → Ctrl+C</b>（全選択コピー）→ 下のテキスト欄に貼り付けて「解析してフォームへ」`;
 }
 function _html_escape_attr(s){ return s.replace(/"/g,"&quot;").replace(/</g,"&lt;"); }
+
+/* --- 形式C: Crowd Agent（クラウドエージェント）形式 --- */
+function parseCrowdAgent(text){
+  const grab = (re)=>{ const m = text.match(re); return m ? m[m.length-1].trim() : ""; };
+  // 企業名（冒頭の宛先=OVERDOORではなく「企業名」ラベルの値を使う）
+  const coLine = grab(/企業名\s*[：:]?\s*([^\n]+)/);
+  if(coLine) $("company").value = coLine.split(/\s*業種/)[0].replace(/\s+/g," ").trim();
+  const pos = grab(/(?:^|\n)\s*ポジション\s*[：:]?\s*([^\n]+)/);
+  if(pos) $("title").value = pos;
+  const sal = grab(/入社時想定年収\s*([0-9,，]+\s*万円\s*[〜～~\-]\s*[0-9,，]+\s*万円)/);
+  if(sal) $("salv").value = sal.replace(/\s+/g,"");
+  // 基本情報
+  const b = {
+    "業種": grab(/業種\s*[：:]?\s*([^\n]+)/),
+    "設立年": grab(/設立年月\s*[：:]?\s*([0-9\s]+年[0-9\s]+月)/),
+    "従業員数": grab(/従業員数\s*[：:]?\s*([^\n売]+)/),
+    "上場区分": grab(/株式公開\s*[：:]?\s*([^\n]+)/),
+  };
+  if(b["設立年"]) b["設立年"] = b["設立年"].replace(/\s+/g,"");
+  if(/正社員/.test(text)) b["雇用形態"] = "正社員";
+  const loc = grab(/勤務地住所\s*[：:]?\s*([^\n]+)/);
+  if(loc) b["勤務地"] = loc;
+  for(const k in b){ if(b[k]) state.basic[k] = b[k]; }
+  // 必須要件 / 歓迎・尚可 → 2カード
+  const reqS = text.indexOf("必須要件"), reqE = text.indexOf("入社時想定年収");
+  if(reqS>=0 && reqE>reqS){
+    const pre = text.lastIndexOf("変更の範囲の制限なし", reqS);
+    const zone = text.slice(pre>=0 ? pre+"変更の範囲の制限なし".length : reqS, reqE);
+    const clean = z => z.replace(/必須要件|歓迎\s*\/?\s*尚可|従事すべき業務の変更の|^\s*範囲\s*$/gm,"")
+      .split("\n").map(s=>s.trim()).filter(Boolean).join("\n");
+    const sp = zone.search(/歓迎\s*\/?\s*尚可/);
+    if(sp>=0){ $("cl").value = clean(zone.slice(0,sp)); $("cr").value = clean(zone.slice(sp)); }
+    else $("cl").value = clean(zone);
+    $("clt").value = "必須要件"; $("crt").value = "歓迎/尚可";
+  }
+  // 会社情報
+  const coStart = Math.max(0, text.indexOf("企業情報"));
+  const coEnd = text.indexOf("サマリー");
+  const CA_CO = ["企業名","本社所在地","URL","設立年月","資本金","従業員数","株式公開","業種","代表者氏名","売上高"];
+  const coRows = splitByLabels(text.slice(coStart, coEnd>0?coEnd:600), CA_CO, true)
+    .map(r=>[r[0], r[1].replace(/\n+/g,"\n").trim()]).filter(r=>r[1]);
+  if(coRows.length) state.sections[2].rows = coRows;
+  // 求人概要
+  const CA_MAIN = ["サマリー","主力製品・サービス","事業内容","収益モデル","主要顧客","企業のアピールポイント",
+    "配属部署詳細","配属部署","募集背景","採用人数","試用期間","仕事内容","賃金制度","待遇条件・昇給賞与",
+    "福利厚生","休日休暇","選考プロセス","リモートワーク","勤務地住所","就業場所の変更の範囲","喫煙環境","転勤の有無","入社後のキャリアパス"];
+  const mainZone = text.slice(coEnd>0?coEnd:0);
+  let rows = splitByLabels(mainZone, CA_MAIN, true)
+    .map(r=>[r[0], r[1].trim()]).filter(r=>r[1] && r[1].replace(/[\s•・]/g,"").length>0);
+  // 選考プロセスは選考情報セクションへ移動
+  const selIdx = rows.findIndex(r=>r[0]==="選考プロセス");
+  if(selIdx>=0){ state.sections[1].rows = [rows[selIdx]]; rows.splice(selIdx,1); }
+  if(rows.length) state.sections[0].rows = rows;
+  syncBasicGrid(); buildSections(); upd();
+  $("parsenote").style.display = "block";
+  $("parsenote").innerHTML = "✅ 解析しました（Crowd Agent形式）。表組みレイアウトの都合で本文の区切りが多少ズレることがあります。プレビューを確認し、フォームで修正してください。";
+}
 
 /* --- 形式B: 「求人情報」システム出力形式（SmartHR・ユーザベース等） --- */
 const EXPORT_LABELS = ["仕事内容","求人概要","業務内容","対象となる方","求める人物像","募集背景","やりがい","ポジションの魅力","働き方","カルチャー","勤務地","勤務条件","休日・休暇","福利厚生・保険","参考資料"];
@@ -677,7 +743,8 @@ function parseCircus(text){
   // --- 会社名・キャッチ ---
   const lines = text.split("\n").map(s=>s.trim()).filter(Boolean);
   let compIdx = -1;
-  for(let i=0;i<Math.min(lines.length,12);i++){
+  for(let i=0;i<Math.min(lines.length,40);i++){  // Webページコピーはナビ等が先頭に入るため広めに探索
+    if(/OVER\s*DOOR/i.test(lines[i])) continue;  // 自社名（宛先表記）は企業名として採用しない
     if(/^(株式会社|合同会社|有限会社)/.test(lines[i]) || (/(株式会社|Inc\.|inc\.)$/.test(lines[i]) && lines[i].length<=40)){ compIdx=i; break; }
   }
   if(compIdx>=0){
@@ -820,6 +887,20 @@ async function extractPdfText(file){
 // 貼り付けた瞬間に自動解析（ボタン押し忘れ対策）
 $("pastebox").addEventListener("paste", ()=>{
   setTimeout(()=>{ if($("pastebox").value.trim()) parseFromPaste(); }, 80);
+});
+// ブックマークレットからのページ全文受信（ワンクリック取込）
+let _bmRecvLock = false;
+window.addEventListener("message", (e)=>{
+  const d = e.data;
+  if(!d || typeof d.od_jd_text !== "string" || _bmRecvLock) return;
+  const text = d.od_jd_text.slice(0, 500000).trim();
+  if(text.length < 50) return;
+  _bmRecvLock = true;
+  setTimeout(()=>{ _bmRecvLock = false; }, 4000);  // 再送分は無視
+  $("pastebox").value = text;
+  parseFromPaste();
+  $("parsenote").style.display = "block";
+  $("parsenote").innerHTML = "⚡ ブックマークレットからページ全文を取り込みました。" + $("parsenote").innerHTML;
 });
 const drop = $("drop");
 drop.addEventListener("dragover",e=>{e.preventDefault();drop.classList.add("on")});
