@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OVERDOOR 適職・性格診断</title>
+<meta name="description" content="28の質問で適職タイプ＋性格タイプを同時診断。OVERDOORの無料キャリア診断。">
+<meta property="og:title" content="OVERDOOR 適職・性格診断">
+<meta property="og:description" content="28問で適職＋性格を同時に診断！より精度の高いキャリア提案をします。">
+<meta property="og:type" content="website">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--teal:#38A4BB;--yellow:#E0D224;--dark:#253F48;--bg:#142028;--bg2:#1a2e36;--surface:rgba(56,164,187,.06);--border:rgba(56,164,187,.25);--text:#f3f4f6;--muted:#9ca3af;--subtle:#6b7280;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:linear-gradient(160deg,var(--bg) 0%,var(--bg2) 60%,#1f3540 100%);min-height:100vh;font-family:'Noto Sans JP','Hiragino Sans',sans-serif;color:var(--text);}
+.wrap{max-width:680px;margin:0 auto;padding:24px 16px 60px;}
+.header{display:flex;align-items:center;gap:12px;margin-bottom:28px;}
+.header-div{width:1px;height:20px;background:var(--border);margin-left:4px;}
+.header-label{font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--teal);text-transform:uppercase;opacity:.85;}
+.screen{display:none;}
+.screen.active{display:block;animation:fadeUp .4s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+
+/* START */
+.start-title{font-size:clamp(26px,7vw,42px);font-weight:900;line-height:1.15;margin-bottom:14px;background:linear-gradient(135deg,#fff 30%,var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.start-sub{color:var(--muted);font-size:14px;line-height:1.85;margin-bottom:26px;}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:30px;}
+.badge{background:rgba(56,164,187,.07);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;}
+.btn-start{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,var(--teal),#2d8fa3);color:#fff;border:none;border-radius:14px;padding:16px 32px;font-size:16px;font-family:inherit;font-weight:700;cursor:pointer;box-shadow:0 4px 24px rgba(56,164,187,.35);transition:transform .15s,box-shadow .15s;}
+.btn-start:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(56,164,187,.45);}
+
+/* PHASE INDICATOR */
+.phase-bar{display:flex;gap:8px;margin-bottom:20px;align-items:center;}
+.phase-dot{width:8px;height:8px;border-radius:50%;background:var(--bg);border:1.5px solid var(--border);transition:all .3s;}
+.phase-dot.done{background:var(--teal);border-color:var(--teal);}
+.phase-dot.active{background:var(--yellow);border-color:var(--yellow);transform:scale(1.3);}
+.phase-label{font-size:11px;color:var(--muted);margin-left:4px;}
+.phase-sep{width:16px;height:1px;background:var(--border);}
+
+/* PROGRESS */
+.prog-wrap{margin-bottom:22px;}
+.prog-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.prog-counter{font-size:12px;font-weight:700;color:var(--teal);letter-spacing:.1em;}
+.prog-cat{font-size:11px;color:var(--teal);background:rgba(56,164,187,.15);border-radius:8px;padding:3px 10px;font-weight:500;}
+.prog-track{height:4px;background:var(--bg);border-radius:4px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--yellow));border-radius:4px;transition:width .4s;}
+
+/* SECTION HEADER */
+.section-header{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:12px;}
+.section-icon{font-size:22px;}
+.section-info{}
+.section-title-sm{font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px;}
+.section-sub{font-size:11px;color:var(--muted);}
+
+/* QUESTION */
+.q-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:24px;margin-bottom:14px;}
+.q-num{font-size:11px;font-weight:900;color:var(--teal);letter-spacing:.2em;text-transform:uppercase;margin-bottom:10px;}
+.q-text{font-size:17px;font-weight:700;line-height:1.65;}
+.options{display:flex;flex-direction:column;gap:10px;}
+.opt-btn{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:15px 17px;text-align:left;color:var(--text);font-family:inherit;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:13px;line-height:1.55;transition:all .15s;}
+.opt-btn:hover{border-color:var(--teal);background:rgba(56,164,187,.1);transform:translateX(4px);}
+.opt-icon{width:33px;height:33px;min-width:33px;background:rgba(255,255,255,.05);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+
+/* RESULT */
+.res-hero{background:linear-gradient(135deg,rgba(56,164,187,.07),rgba(224,210,36,.04));border:1px solid var(--border);border-radius:22px;padding:28px 22px 24px;text-align:center;margin-bottom:12px;}
+.personality-badge-wrap{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+.personality-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;border-radius:20px;font-size:12px;font-weight:700;letter-spacing:.05em;}
+.aptitude-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;border-radius:20px;font-size:12px;font-weight:700;border:1px solid rgba(56,164,187,.4);color:var(--teal);background:rgba(56,164,187,.1);}
+.type-code{font-size:44px;font-weight:900;font-family:system-ui;letter-spacing:.05em;margin-bottom:4px;}
+.type-name-ja{font-size:16px;color:var(--muted);margin-bottom:14px;}
+.res-emoji{font-size:48px;display:block;margin-bottom:10px;}
+.res-main-title{font-size:22px;font-weight:900;margin-bottom:10px;}
+.res-desc{font-size:13px;color:var(--muted);line-height:1.85;max-width:500px;margin:0 auto;}
+.res-section{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:22px;margin-bottom:12px;}
+.sec-title{font-size:11px;font-weight:700;color:var(--subtle);text-transform:uppercase;letter-spacing:.12em;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.sec-bar{width:3px;height:14px;border-radius:2px;display:inline-block;}
+.traits{display:flex;flex-wrap:wrap;gap:8px;}
+.trait{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:7px 13px;font-size:13px;display:flex;align-items:center;gap:6px;}
+.axis-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.axis-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:14px;}
+.axis-label{font-size:11px;color:var(--muted);margin-bottom:6px;}
+.axis-track{height:8px;background:var(--bg);border-radius:4px;overflow:hidden;margin-bottom:6px;}
+.axis-fill{height:100%;border-radius:4px;transition:width 1s cubic-bezier(.4,0,.2,1);}
+.axis-ends{display:flex;justify-content:space-between;font-size:10px;color:var(--subtle);}
+.bar-row{margin-bottom:13px;}
+.bar-label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px;color:var(--muted);}
+.bar-label strong{color:var(--text);}
+.bar-track{height:8px;background:var(--bg);border-radius:4px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:4px;width:0;transition:width 1s cubic-bezier(.4,0,.2,1);}
+.jobs-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.job-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:13px 14px;}
+.job-icon{font-size:20px;margin-bottom:5px;}
+.job-name{font-size:13px;font-weight:700;margin-bottom:3px;color:#f3f4f6;}
+.job-desc{font-size:11px;color:var(--subtle);line-height:1.5;}
+.job-match{display:inline-block;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;margin-bottom:5px;}
+.advice-list{list-style:none;display:flex;flex-direction:column;gap:10px;}
+.advice-item{display:flex;align-items:flex-start;gap:11px;font-size:13px;color:var(--muted);line-height:1.7;}
+.advice-check{width:22px;height:22px;min-width:22px;background:rgba(67,233,123,.15);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#43e97b;margin-top:2px;}
+
+/* SHARE */
+.share-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.btn-url{background:linear-gradient(135deg,var(--teal),#2d8fa3);color:#fff;border:none;border-radius:14px;padding:14px 12px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s;box-shadow:0 4px 18px rgba(56,164,187,.3);}
+.btn-url.copied{background:rgba(67,233,123,.15);color:#43e97b;box-shadow:none;border:1.5px solid #43e97b;}
+.btn-img{background:linear-gradient(135deg,var(--yellow),#c8bc1a);color:var(--dark);border:none;border-radius:14px;padding:14px 12px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 18px rgba(224,210,36,.25);}
+.btn-restart{width:100%;background:rgba(56,164,187,.07);border:1.5px solid var(--border);border-radius:14px;padding:15px;color:var(--teal);font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;margin-top:4px;}
+.res-footer{text-align:center;margin-top:22px;padding-top:18px;border-top:1px solid var(--border);}
+.res-footer-tagline{font-size:11px;color:#4a6470;letter-spacing:.05em;margin-top:6px;}
+@media(max-width:480px){.jobs-grid,.axis-grid,.share-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <svg width="120" height="32" viewBox="0 0 120 32" fill="none">
+      <rect x="0" y="5" width="22" height="22" rx="5" fill="#38A4BB"/>
+      <rect x="10" y="0" width="22" height="22" rx="5" fill="#E0D224"/>
+      <text x="38" y="13" font-family="system-ui,sans-serif" font-weight="900" font-size="10" fill="#fff" letter-spacing="1">OVER</text>
+      <text x="38" y="25" font-family="system-ui,sans-serif" font-weight="900" font-size="10" fill="#fff" letter-spacing="1">DOOR</text>
+    </svg>
+    <div class="header-div"></div>
+    <span class="header-label">適職・性格診断</span>
+  </div>
+
+  <!-- START -->
+  <div class="screen active" id="screen-start">
+    <div class="start-title">適職と性格を<br>同時に診断する</div>
+    <p class="start-sub">28の質問で「どんな仕事が向いているか」と「どんな性格か」を<br>同時に分析。より精度の高いキャリア提案を行います。</p>
+    <div class="badges">
+      <div class="badge">⏱ 約5〜8分</div>
+      <div class="badge">📋 全28問</div>
+      <div class="badge">🧠 性格×適職マトリクス</div>
+      <div class="badge">🔒 無料・匿名</div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin-bottom:28px;">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;">診断の構成</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;">
+          <span style="background:rgba(56,164,187,.2);color:var(--teal);border-radius:6px;padding:3px 9px;font-weight:700;font-size:11px;white-space:nowrap;">前半 Q1-12</span>
+          <span style="color:var(--muted);">適職タイプ診断（価値観・強み・働き方）</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;">
+          <span style="background:rgba(224,210,36,.15);color:#c8bc1a;border-radius:6px;padding:3px 9px;font-weight:700;font-size:11px;white-space:nowrap;">後半 Q13-28</span>
+          <span style="color:var(--muted);">性格タイプ診断（思考・行動・判断スタイル）</span>
+        </div>
+      </div>
+    </div>
+    <button class="btn-start" onclick="startTest()">診断をはじめる →</button>
+  </div>
+
+  <!-- QUESTION -->
+  <div class="screen" id="screen-question">
+    <div class="phase-bar" id="phase-bar">
+      <div class="phase-dot active" id="phase-apt"></div>
+      <div class="phase-sep"></div>
+      <div class="phase-dot" id="phase-per"></div>
+      <span class="phase-label" id="phase-label-el">適職診断中</span>
+    </div>
+    <div class="prog-wrap">
+      <div class="prog-meta">
+        <span class="prog-counter" id="prog-counter">Q 1 / 28</span>
+        <span class="prog-cat" id="prog-cat">価値観</span>
+      </div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+    <div id="section-header-wrap"></div>
+    <div class="q-card">
+      <div class="q-num" id="q-num">QUESTION 01</div>
+      <div class="q-text" id="q-text"></div>
+    </div>
+    <div class="options" id="options"></div>
+  </div>
+
+  <!-- RESULT -->
+  <div class="screen" id="screen-result">
+    <div class="res-hero">
+      <div class="personality-badge-wrap">
+        <span class="personality-badge" id="res-pers-badge"></span>
+        <span class="aptitude-badge" id="res-apt-badge"></span>
+      </div>
+      <div class="type-code" id="res-type-code"></div>
+      <div class="type-name-ja" id="res-type-name-ja"></div>
+      <span class="res-emoji" id="res-emoji"></span>
+      <div class="res-main-title" id="res-main-title"></div>
+      <p class="res-desc" id="res-desc"></p>
+    </div>
+
+    <!-- Personality axes -->
+    <div class="res-section">
+      <div class="sec-title"><span class="sec-bar" id="axis-bar"></span>性格プロファイル</div>
+      <div class="axis-grid" id="res-axes"></div>
+    </div>
+
+    <!-- Traits -->
+    <div class="res-section">
+      <div class="sec-title"><span class="sec-bar" id="traits-bar"></span>あなたの強み</div>
+      <div class="traits" id="res-traits"></div>
+    </div>
+
+    <!-- Aptitude bars -->
+    <div class="res-section">
+      <div class="sec-title"><span class="sec-bar" id="bars-bar"></span>適性スコア</div>
+      <div id="res-bars"></div>
+    </div>
+
+    <!-- Jobs -->
+    <div class="res-section">
+      <div class="sec-title"><span class="sec-bar" id="jobs-bar"></span>あなたに最適な職種</div>
+      <div class="jobs-grid" id="res-jobs"></div>
+    </div>
+
+    <!-- Advice -->
+    <div class="res-section">
+      <div class="sec-title"><span class="sec-bar" id="advice-bar"></span>キャリアアドバイス</div>
+      <ul class="advice-list" id="res-advice"></ul>
+    </div>
+
+    <div class="share-grid">
+      <button class="btn-url" id="btn-url" onclick="copyURL()">🔗 結果URLをコピー</button>
+      <button class="btn-img" onclick="downloadImage()">📥 結果カードを保存</button>
+    </div>
+    <button class="btn-restart" onclick="restartTest()">↺ もう一度診断する</button>
+    <div class="res-footer">
+      <svg width="100" height="26" viewBox="0 0 120 32" fill="none">
+        <rect x="0" y="5" width="22" height="22" rx="5" fill="#38A4BB"/>
+        <rect x="10" y="0" width="22" height="22" rx="5" fill="#E0D224"/>
+        <text x="38" y="13" font-family="system-ui,sans-serif" font-weight="900" font-size="10" fill="#fff" letter-spacing="1">OVER</text>
+        <text x="38" y="25" font-family="system-ui,sans-serif" font-weight="900" font-size="10" fill="#fff" letter-spacing="1">DOOR</text>
+      </svg>
+      <div class="res-footer-tagline">"働く"の可能性を、もっと楽しく</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const BRAND={teal:"#38A4BB",yellow:"#E0D224",dark:"#253F48",bg:"#142028"};
+
+// ============================================================
+// PART 1: 適職診断 Q1-12
+// ============================================================
+const aptitudeQs = [
+  {cat:"価値観",text:"仕事をするうえで一番大切にしたいことは？",opts:[
+    {e:"🤝",l:"人に感謝されること・社会の役に立つこと",s:{social:3,creative:0,analytical:0,leadership:1}},
+    {e:"💡",l:"新しいアイデアや表現を形にすること",s:{social:0,creative:3,analytical:0,leadership:1}},
+    {e:"📊",l:"データや論理で課題を解決すること",s:{social:0,creative:0,analytical:3,leadership:1}},
+    {e:"🚀",l:"チームを引っ張り、成果を出すこと",s:{social:1,creative:0,analytical:0,leadership:3}}]},
+  {cat:"行動スタイル",text:"週末に時間が空いたとき、自然とやりたくなることは？",opts:[
+    {e:"👫",l:"友人・家族との会話や集まり",s:{social:3,creative:0,analytical:0,leadership:1}},
+    {e:"🎨",l:"絵を描く・音楽・写真など創作活動",s:{social:0,creative:3,analytical:0,leadership:0}},
+    {e:"📚",l:"本を読む・ネットで調べ物をする",s:{social:0,creative:0,analytical:3,leadership:0}},
+    {e:"⚡",l:"新しいことに挑戦・自己投資",s:{social:0,creative:1,analytical:1,leadership:3}}]},
+  {cat:"得意なこと",text:"学校や職場で「得意だね」と言われやすかったことは？",opts:[
+    {e:"👂",l:"人の話を聞いて共感・サポートする",s:{social:3,creative:0,analytical:0,leadership:1}},
+    {e:"✏️",l:"企画・アイデア出し・デザイン",s:{social:0,creative:3,analytical:0,leadership:1}},
+    {e:"🔍",l:"調査・分析・計算",s:{social:0,creative:0,analytical:3,leadership:0}},
+    {e:"🎤",l:"まとめ役・交渉・プレゼン",s:{social:1,creative:0,analytical:0,leadership:3}}]},
+  {cat:"働き方",text:"理想の仕事の進め方は？",opts:[
+    {e:"🤜",l:"チームで協力して動く・コミュニケーションが多い",s:{social:3,creative:0,analytical:0,leadership:2}},
+    {e:"🎧",l:"自分のペースで集中して取り組む",s:{social:0,creative:2,analytical:2,leadership:0}},
+    {e:"📌",l:"明確な目標と計画のもとで着実に進める",s:{social:0,creative:0,analytical:3,leadership:1}},
+    {e:"💨",l:"裁量が大きく、スピード感がある",s:{social:0,creative:1,analytical:0,leadership:3}}]},
+  {cat:"モチベーション",text:"最もやる気が出るのはどんな瞬間？",opts:[
+    {e:"🌟",l:"お客さんや同僚に感謝されたとき",s:{social:3,creative:0,analytical:0,leadership:1}},
+    {e:"🎉",l:"自分の作品・企画がリリースされたとき",s:{social:0,creative:3,analytical:0,leadership:1}},
+    {e:"💎",l:"複雑な問題が解けたとき",s:{social:0,creative:0,analytical:3,leadership:0}},
+    {e:"📈",l:"目標を達成・数字が上がったとき",s:{social:0,creative:0,analytical:1,leadership:3}}]},
+  {cat:"ストレス",text:"仕事でストレスを感じやすい場面は？",opts:[
+    {e:"😓",l:"人間関係のトラブルや板挟み",s:{social:0,creative:2,analytical:2,leadership:0}},
+    {e:"🔒",l:"自分らしさを出せない・制約が多い",s:{social:0,creative:3,analytical:0,leadership:0}},
+    {e:"🌫️",l:"感覚的・曖昧な指示が続くとき",s:{social:1,creative:0,analytical:3,leadership:0}},
+    {e:"⏳",l:"自分で意思決定できない・指示待ちばかり",s:{social:0,creative:0,analytical:0,leadership:3}}]},
+  {cat:"コミュニケーション",text:"職場での人間関係について、最も近い考えは？",opts:[
+    {e:"❤️",l:"関係性こそが仕事の醍醐味、深いつながりを大切にしたい",s:{social:3,creative:0,analytical:0,leadership:1}},
+    {e:"🔥",l:"刺激し合えるクリエイティブな仲間と働きたい",s:{social:1,creative:3,analytical:0,leadership:0}},
+    {e:"⚙️",l:"無駄なく、合理的・フラットな関係が好き",s:{social:0,creative:0,analytical:3,leadership:1}},
+    {e:"🏆",l:"お互い切磋琢磨できるチームが理想",s:{social:0,creative:0,analytical:0,leadership:3}}]},
+  {cat:"キャリア観",text:"5年後のキャリアイメージに最も近いのは？",opts:[
+    {e:"🌱",l:"人を支援・育成する立場になっていたい",s:{social:3,creative:0,analytical:0,leadership:2}},
+    {e:"🎨",l:"専門スキルで独自の価値を出している",s:{social:0,creative:3,analytical:1,leadership:0}},
+    {e:"🔬",l:"専門的な知識で組織になくてはならない存在",s:{social:0,creative:0,analytical:3,leadership:1}},
+    {e:"👑",l:"マネージャーや事業責任者として成果を上げている",s:{social:1,creative:0,analytical:0,leadership:3}}]},
+  {cat:"得意分野",text:"新しいプロジェクトが始まったとき、自然と担当したくなる役割は？",opts:[
+    {e:"📞",l:"関係者への連絡・調整・コミュニケーション",s:{social:3,creative:0,analytical:0,leadership:1}},
+    {e:"📐",l:"コンセプト・デザイン・企画書づくり",s:{social:0,creative:3,analytical:0,leadership:0}},
+    {e:"📋",l:"データ収集・調査・資料まとめ",s:{social:0,creative:0,analytical:3,leadership:0}},
+    {e:"🗂️",l:"全体の進行管理・意思決定",s:{social:0,creative:0,analytical:1,leadership:3}}]},
+  {cat:"環境",text:"どんな職場環境で力を発揮できると思う？",opts:[
+    {e:"🏢",l:"人が多く、会話が絶えない活発な職場",s:{social:3,creative:0,analytical:0,leadership:1}},
+    {e:"🎭",l:"自由で個性が認められるクリエイティブな場所",s:{social:0,creative:3,analytical:0,leadership:0}},
+    {e:"🔭",l:"静かで集中できる・専門性を磨ける場所",s:{social:0,creative:0,analytical:3,leadership:0}},
+    {e:"⚡",l:"競争があり、成長スピードが速い環境",s:{social:0,creative:0,analytical:0,leadership:3}}]},
+  {cat:"強み",text:"自分の「一番の武器」だと思うスキルは？",opts:[
+    {e:"💬",l:"傾聴力・共感力・信頼関係を築く力",s:{social:3,creative:0,analytical:0,leadership:1}},
+    {e:"✨",l:"発想力・センス・クリエイティビティ",s:{social:0,creative:3,analytical:0,leadership:0}},
+    {e:"🧩",l:"論理的思考力・問題解決能力",s:{social:0,creative:0,analytical:3,leadership:0}},
+    {e:"💪",l:"行動力・突破力・人を動かす力",s:{social:0,creative:0,analytical:0,leadership:3}}]},
+  {cat:"仕事観",text:"「良い仕事」とはどういうものだと思う？",opts:[
+    {e:"🌈",l:"誰かの人生に深く関われること",s:{social:3,creative:0,analytical:0,leadership:1}},
+    {e:"🌍",l:"世の中に新しい価値・体験を生み出すこと",s:{social:0,creative:3,analytical:0,leadership:1}},
+    {e:"⚗️",l:"課題を根本から解決し、仕組みを変えること",s:{social:0,creative:0,analytical:3,leadership:1}},
+    {e:"🏆",l:"チームを動かし、大きな成果を出すこと",s:{social:0,creative:0,analytical:0,leadership:3}}]}
+];
+
+// ============================================================
+// PART 2: 性格診断 Q13-28 (E/I, N/S, T/F, J/P 各4問)
+// ============================================================
+const personalityQs = [
+  // E/I (外向/内向)
+  {cat:"E/I — エネルギーの源",axis:"EI",text:"初対面の人が多い場所に行ったとき、どちらに近い？",opts:[
+    {e:"😄",l:"積極的に話しかけて、むしろ元気になる",a:"E",b:"I",weight:2},
+    {e:"😊",l:"少し緊張するが、慣れれば楽しめる",a:"E",b:"I",weight:1},
+    {e:"😌",l:"最低限の会話で静かに過ごしたい",a:"I",b:"E",weight:1},
+    {e:"😶",l:"かなり消耗する。早く一人になりたい",a:"I",b:"E",weight:2}]},
+  {cat:"E/I — 活力の回復",axis:"EI",text:"疲れたとき、元気を取り戻す方法は？",opts:[
+    {e:"🎉",l:"友人と話したり、外出して気分転換する",a:"E",b:"I",weight:2},
+    {e:"☕",l:"誰かと一緒にいつつ、静かに過ごす",a:"E",b:"I",weight:1},
+    {e:"📖",l:"一人で好きなことをしてゆっくり休む",a:"I",b:"E",weight:1},
+    {e:"🛌",l:"完全に一人になって、静かな空間で回復する",a:"I",b:"E",weight:2}]},
+  {cat:"E/I — コミュニケーション",axis:"EI",text:"会議や打ち合わせでの自分のスタイルは？",opts:[
+    {e:"🙋",l:"積極的に発言する。話しながら考えがまとまる",a:"E",b:"I",weight:2},
+    {e:"💬",l:"雰囲気を見ながら、必要なときに発言する",a:"E",b:"I",weight:1},
+    {e:"🤔",l:"頭の中で整理してから、タイミングを選んで話す",a:"I",b:"E",weight:1},
+    {e:"✍️",l:"口頭より文章やメモで伝えるほうが得意",a:"I",b:"E",weight:2}]},
+  {cat:"E/I — 休日の過ごし方",axis:"EI",text:"理想の休日の過ごし方に近いのは？",opts:[
+    {e:"🎊",l:"友人と集まってにぎやかに過ごす",a:"E",b:"I",weight:2},
+    {e:"🚶",l:"少人数で外出して気分転換する",a:"E",b:"I",weight:1},
+    {e:"🎮",l:"家で好きなことをして過ごす",a:"I",b:"E",weight:1},
+    {e:"🧘",l:"完全に一人でゆっくり充電する",a:"I",b:"E",weight:2}]},
+  // N/S (直感/感覚)
+  {cat:"N/S — 情報の捉え方",axis:"NS",text:"新しい企画やアイデアを考えるとき、どちらに近い？",opts:[
+    {e:"🌟",l:"まず大きなビジョンやコンセプトから考える",a:"N",b:"S",weight:2},
+    {e:"💡",l:"可能性を広げてからで絞り込む",a:"N",b:"S",weight:1},
+    {e:"📋",l:"事例や実績を調べてから考える",a:"S",b:"N",weight:1},
+    {e:"🔢",l:"具体的な数字やデータを積み上げて考える",a:"S",b:"N",weight:2}]},
+  {cat:"N/S — 問題解決スタイル",axis:"NS",text:"仕事で問題が起きたとき、最初にすることは？",opts:[
+    {e:"🧠",l:"根本的な原因や本質的な構造を考える",a:"N",b:"S",weight:2},
+    {e:"🔍",l:"まず全体像を把握してから原因を探る",a:"N",b:"S",weight:1},
+    {e:"📊",l:"過去の類似事例を調べて対処法を探す",a:"S",b:"N",weight:1},
+    {e:"⚡",l:"今すぐできる具体的な対処をとる",a:"S",b:"N",weight:2}]},
+  {cat:"N/S — 未来と現在",axis:"NS",text:"仕事について考えるとき、どちらに時間を使いがち？",opts:[
+    {e:"🔭",l:"将来の可能性や長期的なビジョン",a:"N",b:"S",weight:2},
+    {e:"🗺️",l:"中期的な計画と戦略を考えること",a:"N",b:"S",weight:1},
+    {e:"📅",l:"当面のタスクと短期目標の管理",a:"S",b:"N",weight:1},
+    {e:"🎯",l:"今日やるべき具体的な作業と成果",a:"S",b:"N",weight:2}]},
+  {cat:"N/S — 変化への姿勢",axis:"NS",text:"業務の進め方について、より近いのは？",opts:[
+    {e:"🆕",l:"新しいやり方を試すのが好き・変化を楽しめる",a:"N",b:"S",weight:2},
+    {e:"🔄",l:"改善は好きだが、基盤は大切にする",a:"N",b:"S",weight:1},
+    {e:"✅",l:"実績のある方法を着実にこなすほうが安心",a:"S",b:"N",weight:1},
+    {e:"📐",l:"決まったルールや手順通りに進めるのが好き",a:"S",b:"N",weight:2}]},
+  // T/F (思考/感情)
+  {cat:"T/F — 意思決定の基準",axis:"TF",text:"重要な判断をするとき、最も重視するのは？",opts:[
+    {e:"⚖️",l:"データと論理。客観的な事実に基づいて判断する",a:"T",b:"F",weight:2},
+    {e:"📈",l:"メリット・デメリットを分析して効率的な選択をする",a:"T",b:"F",weight:1},
+    {e:"💛",l:"周囲への影響や関係者の気持ちを大切にする",a:"F",b:"T",weight:1},
+    {e:"❤️",l:"自分の価値観や直感、相手との信頼関係を優先する",a:"F",b:"T",weight:2}]},
+  {cat:"T/F — フィードバック",axis:"TF",text:"他者から批判やダメ出しを受けたとき、どちらに近い？",opts:[
+    {e:"💪",l:"感情は横に置いて、改善点として受け止める",a:"T",b:"F",weight:2},
+    {e:"🧐",l:"まず内容の正しさを確認してから判断する",a:"T",b:"F",weight:1},
+    {e:"😢",l:"少し傷つくが、相手の意図を汲もうとする",a:"F",b:"T",weight:1},
+    {e:"🥺",l:"かなり感情的に受け止める・引きずることも",a:"F",b:"T",weight:2}]},
+  {cat:"T/F — 対立への対処",axis:"TF",text:"チームで意見が対立したとき、取る行動は？",opts:[
+    {e:"🔎",l:"正しい主張はどちらかを論理的に整理して決める",a:"T",b:"F",weight:2},
+    {e:"📝",l:"双方の主張を分析して、最善の落としどころを探す",a:"T",b:"F",weight:1},
+    {e:"🤝",l:"関係を壊さないよう調整して合意を目指す",a:"F",b:"T",weight:1},
+    {e:"🌸",l:"相手の気持ちを最優先にして、自分が譲ることも",a:"F",b:"T",weight:2}]},
+  {cat:"T/F — 他者への関わり方",axis:"TF",text:"部下や後輩を指導するとき、大切にすることは？",opts:[
+    {e:"📊",l:"明確な基準と客観的なフィードバックで成長を促す",a:"T",b:"F",weight:2},
+    {e:"🎯",l:"成果と成長の両方をバランスよく見る",a:"T",b:"F",weight:1},
+    {e:"💬",l:"まず関係を築いて、本人のペースに合わせる",a:"F",b:"T",weight:1},
+    {e:"🫂",l:"相手の感情や状況を最優先に寄り添う",a:"F",b:"T",weight:2}]},
+  // J/P (判断/知覚)
+  {cat:"J/P — 計画への姿勢",axis:"JP",text:"旅行や大きなイベントを前にして、どちらが近い？",opts:[
+    {e:"📅",l:"早めに詳細まで計画して、準備万端にしておきたい",a:"J",b:"P",weight:2},
+    {e:"✅",l:"大まかなプランを立てて、余裕を持って進める",a:"J",b:"P",weight:1},
+    {e:"🗺️",l:"方向性だけ決めて、あとは流れに任せる",a:"P",b:"J",weight:1},
+    {e:"🌊",l:"あまり決めずに、その場の状況で楽しみたい",a:"P",b:"J",weight:2}]},
+  {cat:"J/P — タスク管理",axis:"JP",text:"仕事のタスクや締め切りについて、どちらに近い？",opts:[
+    {e:"⏰",l:"余裕を持って早めに仕上げ、見直しの時間も確保する",a:"J",b:"P",weight:2},
+    {e:"📋",l:"スケジュールを立てて、計画通り進める",a:"J",b:"P",weight:1},
+    {e:"🌀",l:"締め切り前になると集中力が上がるタイプ",a:"P",b:"J",weight:1},
+    {e:"🔥",l:"追い込まれてから本領発揮することが多い",a:"P",b:"J",weight:2}]},
+  {cat:"J/P — 変化への柔軟性",axis:"JP",text:"予定外のことが起きたとき、どちらに近い？",opts:[
+    {e:"😰",l:"計画が崩れてストレスを感じる・修正に時間がかかる",a:"J",b:"P",weight:2},
+    {e:"🔧",l:"少し困るが、素早く修正して対応できる",a:"J",b:"P",weight:1},
+    {e:"😎",l:"むしろ柔軟に対応するのは得意なほう",a:"P",b:"J",weight:1},
+    {e:"🎲",l:"即興で動くのが得意、変化は楽しめる",a:"P",b:"J",weight:2}]},
+  {cat:"J/P — 意思決定のスピード",axis:"JP",text:"何かを決めるとき、どちらのスタイルに近い？",opts:[
+    {e:"✍️",l:"情報が揃ったら早めに決定して前に進む",a:"J",b:"P",weight:2},
+    {e:"🎯",l:"主要な情報で判断して、あとは調整する",a:"J",b:"P",weight:1},
+    {e:"🔄",l:"できるだけ多くの選択肢を検討してから決める",a:"P",b:"J",weight:1},
+    {e:"⏳",l:"ギリギリまで情報を集めてベストを選びたい",a:"P",b:"J",weight:2}]}
+];
+
+const allQs = [...aptitudeQs, ...personalityQs];
+
+// ============================================================
+// APTITUDE RESULTS
+// ============================================================
+const APT = {
+  social:{key:"social",type:"ヒューマンサポート型",emoji:"🤝",color:BRAND.teal,
+    traits:[["🎯","共感力が高い"],["👥","チームワーク重視"],["🌱","育成・サポートが得意"],["💬","コミュニケーション上手"],["🤲","思いやりがある"]],
+    bars:[{l:"コミュニケーション力",v:95},{l:"分析力・論理性",v:55},{l:"クリエイティビティ",v:60},{l:"リーダーシップ",v:70}]},
+  creative:{key:"creative",type:"クリエイティブ探求型",emoji:"🎨",color:"#c8a800",
+    traits:[["💡","独創的な発想"],["🎨","審美眼・センスがある"],["🔭","好奇心旺盛"],["✍️","表現力が高い"],["🌀","変化を楽しめる"]],
+    bars:[{l:"コミュニケーション力",v:65},{l:"分析力・論理性",v:65},{l:"クリエイティビティ",v:95},{l:"リーダーシップ",v:55}]},
+  analytical:{key:"analytical",type:"ロジカル探求型",emoji:"🔬",color:"#5bbcd4",
+    traits:[["📊","データ分析が得意"],["🧩","問題解決思考"],["🎯","精度へのこだわり"],["📚","専門知識を深める"],["⚙️","論理的かつ合理的"]],
+    bars:[{l:"コミュニケーション力",v:60},{l:"分析力・論理性",v:95},{l:"クリエイティビティ",v:60},{l:"リーダーシップ",v:55}]},
+  leadership:{key:"leadership",type:"チャレンジドライバー型",emoji:"🚀",color:"#c8bc1a",
+    traits:[["⚡","行動力・突破力がある"],["🏆","結果にこだわる"],["🔥","高いモチベーション"],["🎤","説得力がある"],["👑","リーダーシップ気質"]],
+    bars:[{l:"コミュニケーション力",v:80},{l:"分析力・論理性",v:65},{l:"クリエイティビティ",v:60},{l:"リーダーシップ",v:95}]}
+};
+
+// ============================================================
+// 16 PERSONALITY TYPES
+// ============================================================
+const PERS = {
+  INTJ:{name:"戦略家",desc:"独創的な思考と強い意志を持つ戦略家。長期的なビジョンを描き、緻密な計画で実行する。"},
+  INTP:{name:"論理学者",desc:"客観的な分析と理論構築が得意。複雑な問題を深く掘り下げ、独自の解決策を見つける。"},
+  ENTJ:{name:"指揮官",desc:"生まれながらのリーダー。目標に向かって人を動かし、組織を変革する強さを持つ。"},
+  ENTP:{name:"討論者",desc:"アイデアと議論を愛するイノベーター。常識に挑戦し、新しい可能性を切り拓く。"},
+  INFJ:{name:"提唱者",desc:"深い洞察力と強い理想を持つ。人の可能性を信じ、社会をより良くするために動く。"},
+  INFP:{name:"仲介者",desc:"豊かな感受性と高い理想を持つ。価値観に基づいて行動し、人の心に寄り添う。"},
+  ENFJ:{name:"主人公",desc:"カリスマ的なリーダーシップで人を引っ張る。他者の成長を支援することに喜びを感じる。"},
+  ENFP:{name:"広報運動家",desc:"情熱とアイデアで周囲を巻き込む。可能性を信じ、人とのつながりを大切にする。"},
+  ISTJ:{name:"管理者",desc:"責任感が強く、着実に物事を進める。ルールと秩序を大切にし、信頼性が高い。"},
+  ISFJ:{name:"擁護者",desc:"献身的で思いやりがある。細部に気を配り、周囲の人を静かにサポートする。"},
+  ESTJ:{name:"幹部",desc:"組織とルールを重んじる実務家。効率的に目標を達成し、チームをまとめる力がある。"},
+  ESFJ:{name:"領事官",desc:"温かみと社交性を持ち、周囲の和を大切にする。チームの絆を深めるのが得意。"},
+  ISTP:{name:"巨匠",desc:"冷静な分析力と優れた実務能力を持つ職人。状況を把握し、効果的な解決策を実行する。"},
+  ISFP:{name:"冒険家",desc:"穏やかで感受性が高く、自分のスタイルを大切にする。行動で人の役に立つことを好む。"},
+  ESTP:{name:"起業家",desc:"大胆な行動力とリスク管理能力を持つ実務家。スピード感を持って課題を突破する。"},
+  ESFP:{name:"エンターテイナー",desc:"明るく社交的で、周囲に活力を与える。実践的な経験を通じて学ぶタイプ。"}
+};
+
+// ============================================================
+// COMBINED CAREER MATRIX (aptitude × personality)
+// ============================================================
+function getJobs(apt, type) {
+  const E=type[0]==="E", N=type[1]==="N", T=type[2]==="T", J=type[3]==="J";
+  const matrices = {
+    social: {
+      ENFJ:[{e:"🧑‍🏫",n:"HR/組織開発マネージャー",d:"人を育てて組織を変える"},{e:"🌟",n:"カスタマーサクセスリード",d:"顧客の成功を長期で支援"},{e:"💼",n:"コンサルタント（人材・組織）",d:"企業の組織課題を解決"},{e:"🎓",n:"研修講師・L&D担当",d:"社員の成長を設計する"}],
+      INFJ:[{e:"🤝",n:"キャリアアドバイザー",d:"一人ひとりのキャリアを支援"},{e:"🧠",n:"コーチ・メンター",d:"深く関わり可能性を引き出す"},{e:"💛",n:"社会福祉・NPO運営",d:"社会課題の解決に貢献"},{e:"✍️",n:"医療・福祉系コーディネーター",d:"人と組織をつなぐ"}],
+      ENFP:[{e:"🎉",n:"採用ブランディング担当",d:"会社の魅力を伝えるプロ"},{e:"🌈",n:"コミュニティマネージャー",d:"人とサービスをつなぐ"},{e:"🗣️",n:"広報・PR担当",d:"ストーリーで共感を生む"},{e:"🤝",n:"パートナーセールス",d:"関係構築でビジネスを広げる"}],
+      ESFJ:[{e:"👥",n:"カスタマーサポートマネージャー",d:"チームで顧客満足を高める"},{e:"🏥",n:"医療事務・医療コーディネーター",d:"患者と医療をつなぐ"},{e:"🏫",n:"学校・教育機関の事務",d:"組織の運営を支える"},{e:"📋",n:"人事・採用担当",d:"人と会社のマッチングを支援"}],
+      INFP:[{e:"📖",n:"教育・保育士",d:"子どもの成長を温かく支援"},{e:"💙",n:"カウンセラー・支援員",d:"心に寄り添い力になる"},{e:"✍️",n:"UXライター・コンテンツ担当",d:"ユーザーに共感するコピー"},{e:"🌿",n:"NPO・ソーシャルワーカー",d:"社会貢献活動の最前線"}],
+      default:[{e:"🤝",n:"人材・採用担当",d:"人の可能性を見極めて活かす"},{e:"👩‍🏫",n:"研修・教育担当",d:"知識と情熱で人を育てる"},{e:"🤝",n:"カスタマーサクセス",d:"顧客との信頼関係が武器"},{e:"💼",n:"法人営業・コンサル",d:"人との信頼で成果を出す"}]
+    },
+    creative: {
+      ENTP:[{e:"🚀",n:"プロダクトマネージャー",d:"ゼロからプロダクトを作る"},{e:"💡",n:"事業開発・新規事業担当",d:"アイデアをビジネスに変える"},{e:"🎯",n:"グロースハッカー",d:"データとアイデアで成長を設計"},{e:"🔬",n:"UXリサーチャー",d:"ユーザーの深層心理を探る"}],
+      INFP:[{e:"✍️",n:"コピーライター・クリエイター",d:"言葉で感情を動かす"},{e:"🎨",n:"グラフィックデザイナー",d:"ビジュアルで価値を創造"},{e:"📖",n:"コンテンツマーケター",d:"ストーリーでファンをつくる"},{e:"🌿",n:"ブランドデザイナー",d:"世界観を丁寧に設計する"}],
+      ENFP:[{e:"📱",n:"SNSマーケター",d:"クリエイティブで世界に届ける"},{e:"🎬",n:"動画クリエイター・編集者",d:"映像で感動を生む"},{e:"🎙️",n:"イベントプランナー",d:"体験を企画・設計する"},{e:"🌟",n:"インフルエンサーマーケティング",d:"人とブランドをつなぐ"}],
+      INTP:[{e:"💻",n:"UI/UXデザイナー",d:"論理と感性でユーザー体験を設計"},{e:"🔧",n:"フロントエンドエンジニア",d:"見た目と体験を実装する"},{e:"📐",n:"インフォメーションアーキテクト",d:"情報を美しく整理する"},{e:"🧪",n:"プロトタイプエンジニア",d:"アイデアを素早く形にする"}],
+      default:[{e:"🎨",n:"デザイナー/UI-UX",d:"感性と論理を融合させた仕事"},{e:"📱",n:"マーケター/SNS担当",d:"クリエイティブで世界に届ける"},{e:"✍️",n:"コピーライター/編集",d:"言葉で価値を創造"},{e:"🚀",n:"プロダクトマネージャー",d:"企画力で新しい体験を作る"}]
+    },
+    analytical: {
+      INTJ:[{e:"📊",n:"データサイエンティスト",d:"データで未来を予測・設計する"},{e:"🏢",n:"戦略コンサルタント",d:"経営課題を論理的に解決する"},{e:"💹",n:"投資アナリスト・ファンドマネージャー",d:"数字と洞察で価値を見極める"},{e:"⚙️",n:"システムアーキテクト",d:"複雑なシステムを設計する"}],
+      INTP:[{e:"🔬",n:"データエンジニア",d:"大規模データ基盤を構築する"},{e:"💻",n:"バックエンドエンジニア",d:"論理でシステムを作り上げる"},{e:"🧪",n:"リサーチャー・研究職",d:"深く掘り下げて真実を探す"},{e:"📐",n:"プロダクトアナリスト",d:"データでプロダクトを改善する"}],
+      ISTJ:[{e:"📋",n:"経営企画・事業計画担当",d:"緻密な計画で組織を動かす"},{e:"💰",n:"財務・経理マネージャー",d:"数字で会社を支える"},{e:"⚖️",n:"コンプライアンス・法務",d:"ルールと論理で組織を守る"},{e:"📊",n:"オペレーションマネージャー",d:"業務を効率化・最適化する"}],
+      ISTP:[{e:"🔧",n:"インフラエンジニア",d:"システムの根幹を支える"},{e:"🛡️",n:"セキュリティエンジニア",d:"脅威を分析し組織を守る"},{e:"📡",n:"ネットワークエンジニア",d:"接続を設計・維持管理する"},{e:"🏭",n:"製造・品質管理エンジニア",d:"精密さで品質を守る"}],
+      default:[{e:"📊",n:"データアナリスト",d:"数字から本質的な洞察を導く"},{e:"💻",n:"エンジニア/開発職",d:"論理思考で複雑な問題を解く"},{e:"📈",n:"経営企画/財務",d:"分析力で意思決定を支援"},{e:"🔍",n:"リサーチャー/調査",d:"深掘りする姿勢が強みに"}]
+    },
+    leadership: {
+      ENTJ:[{e:"👑",n:"事業責任者・経営者",d:"ビジョンを描き組織を率いる"},{e:"🚀",n:"スタートアップ創業・共同創業",d:"0→1で事業を作り上げる"},{e:"💼",n:"戦略コンサルタント（マネージャー以上）",d:"クライアントの変革を牽引する"},{e:"🏢",n:"事業企画リーダー",d:"新規事業を立ち上げる"}],
+      ESTP:[{e:"💰",n:"営業マネージャー・エース営業",d:"スピード感で案件を突破する"},{e:"🎲",n:"ベンチャー/スタートアップ営業",d:"不確実な環境でも結果を出す"},{e:"🤝",n:"M&A・事業提携担当",d:"大きな取引を動かす交渉力"},{e:"📦",n:"フィールドセールスリード",d:"現場で結果を作るプロ"}],
+      ENTP:[{e:"🔥",n:"BizDev・事業開発",d:"パートナー戦略でビジネスを広げる"},{e:"🌍",n:"グローバルセールス",d:"世界を相手にビジネスを展開"},{e:"💡",n:"プロダクトリード",d:"ユーザーとビジネスを両立させる"},{e:"🚀",n:"グロースリード",d:"急成長を設計・実行する"}],
+      ESTJ:[{e:"🏢",n:"オペレーションディレクター",d:"組織の仕組みを作り効率化する"},{e:"📊",n:"営業部長・エリアマネージャー",d:"チームを目標達成に導く"},{e:"⚙️",n:"PMO・プロジェクトマネージャー",d:"複数プロジェクトを統括する"},{e:"🏭",n:"製造・工場マネージャー",d:"現場を管理して成果を上げる"}],
+      default:[{e:"💼",n:"営業リーダー/BizDev",d:"推進力と交渉力で結果を出す"},{e:"🏢",n:"事業企画・新規事業",d:"チャレンジ精神を活かせる場所"},{e:"🚀",n:"ベンチャー/スタートアップ",d:"スピード感ある環境で輝ける"},{e:"👥",n:"マネージャー/組織開発",d:"チームを動かして成果を上げる"}]
+    }
+  };
+  const aptMap = matrices[apt];
+  if(aptMap[type]) return aptMap[type];
+  // fallback: match by closest 2 letters
+  const keys = Object.keys(aptMap).filter(k=>k!=="default");
+  const best = keys.find(k=>k.split("").filter((c,i)=>c===type[i]).length>=2);
+  return best ? aptMap[best] : aptMap.default;
+}
+
+function getAdvice(apt, type) {
+  const E=type[0]==="E", N=type[1]==="N", T=type[2]==="T", J=type[3]==="J";
+  const base = {
+    social:["人を中心に置いた職種（採用・CS・営業・教育）は天職になりやすいです。","信頼関係の構築が得意なため、長期的な顧客・候補者対応で強みを発揮します。"],
+    creative:["デザイン・マーケ・コンテンツなど、アウトプットが見える仕事が向いています。","スタートアップや制作会社では自分らしさを最大限に活かせます。"],
+    analytical:["専門性を磨ける環境（エンジニア・データ・経営企画）が最適です。","スペシャリストとして評価され、その後マネジメントへ進む道もあります。"],
+    leadership:["スピードと裁量がある環境（営業・ベンチャー・新規事業）が向いています。","早期にリーダーポジションを狙える企業・成長市場を選ぶのが正解です。"]
+  };
+  const personalityAdvice = [];
+  if(E) personalityAdvice.push("外向型の強みを活かして、積極的なネットワーキングや対外交渉で価値を発揮できます。");
+  else personalityAdvice.push("内向型の集中力と深い思考力を活かして、専門性・分析・執筆などで際立つことができます。");
+  if(N) personalityAdvice.push("直感・未来志向の強みで、戦略立案や新しい概念の設計が得意分野になります。");
+  else personalityAdvice.push("現実・実務の強みで、確実な実行力と精度の高い作業が高く評価されます。");
+  if(J) personalityAdvice.push("計画性と実行力が高いため、プロジェクトリードやマネジメントへのキャリアが向いています。");
+  else personalityAdvice.push("柔軟性と適応力が高いため、変化の早い環境やマルチタスクが必要な役割で輝けます。");
+  return [...base[apt], ...personalityAdvice];
+}
+
+// ============================================================
+// STATE & LOGIC
+// ============================================================
+let cur=0, aptScores={social:0,creative:0,analytical:0,leadership:0};
+let perScores={E:0,I:0,N:0,S:0,T:0,F:0,J:0,P:0};
+let currentApt=null, currentType=null;
+
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo({top:0,behavior:'smooth'});}
+
+function startTest(){
+  cur=0;aptScores={social:0,creative:0,analytical:0,leadership:0};perScores={E:0,I:0,N:0,S:0,T:0,F:0,J:0,P:0};
+  const url=new URL(location.href);url.searchParams.delete('result');url.searchParams.delete('type');history.replaceState({},'',url);
+  renderQ();show('screen-question');
+}
+
+function renderQ(){
+  const isPersonality = cur >= aptitudeQs.length;
+  const localIdx = isPersonality ? cur - aptitudeQs.length : cur;
+  const q = allQs[cur];
+  const total = allQs.length;
+
+  // Phase indicator
+  document.getElementById('phase-apt').className = 'phase-dot' + (isPersonality ? ' done' : ' active');
+  document.getElementById('phase-per').className = 'phase-dot' + (isPersonality ? ' active' : '');
+  document.getElementById('phase-label-el').textContent = isPersonality ? '性格診断中' : '適職診断中';
+
+  // Progress
+  document.getElementById('prog-counter').textContent=`Q ${cur+1} / ${total}`;
+  document.getElementById('prog-cat').textContent=q.cat;
+  document.getElementById('q-num').textContent=`QUESTION ${String(cur+1).padStart(2,'0')}`;
+  document.getElementById('q-text').textContent=q.text;
+  document.getElementById('prog-fill').style.width=`${(cur/total)*100}%`;
+
+  // Section header (show when switching to personality)
+  const hw = document.getElementById('section-header-wrap');
+  if(cur === aptitudeQs.length) {
+    hw.innerHTML=`<div class="section-header"><div class="section-icon">🧠</div><div class="section-info"><div class="section-title-sm">パート2：性格タイプ診断</div><div class="section-sub">あなたの思考・判断・行動スタイルを分析します（16問）</div></div></div>`;
+  } else if(cur===0){
+    hw.innerHTML=`<div class="section-header"><div class="section-icon">🎯</div><div class="section-info"><div class="section-title-sm">パート1：適職タイプ診断</div><div class="section-sub">あなたの価値観・強み・働き方を分析します（12問）</div></div></div>`;
+  } else { hw.innerHTML=''; }
+
+  // Options
+  const el=document.getElementById('options');
+  el.innerHTML=q.opts.map((o,i)=>`<button class="opt-btn" onclick="pick(${i})"><div class="opt-icon">${o.e}</div><span>${o.l}</span></button>`).join('');
+}
+
+function pick(i){
+  const q=allQs[cur];
+  if(cur < aptitudeQs.length){
+    const s=q.opts[i].s;
+    Object.keys(s).forEach(k=>aptScores[k]+=s[k]);
+  } else {
+    const o=q.opts[i];
+    const w=o.weight||1;
+    perScores[o.a]+=w; perScores[o.b]-=w;
+  }
+  cur++;
+  if(cur>=allQs.length) calcResult();
+  else renderQ();
+}
+
+function calcResult(){
+  const topApt=Object.entries(aptScores).sort((a,b)=>b[1]-a[1])[0][0];
+  const typeCode=[
+    perScores.E>=perScores.I?'E':'I',
+    perScores.N>=perScores.S?'N':'S',
+    perScores.T>=perScores.F?'T':'F',
+    perScores.J>=perScores.P?'J':'P'
+  ].join('');
+  currentApt=topApt; currentType=typeCode;
+  showResult(topApt, typeCode);
+  const url=new URL(location.href);
+  url.searchParams.set('result',topApt);
+  url.searchParams.set('type',typeCode);
+  history.replaceState({},'',url);
+}
+
+function showResult(apt, type){
+  const A=APT[apt], P=PERS[type]||{name:"タイプ",desc:""};
+  const color=A.color;
+
+  // Badges
+  const pb=document.getElementById('res-pers-badge');
+  pb.textContent=`${type} ${P.name}`;
+  pb.style.background=color+'22';pb.style.border=`1px solid ${color}`;pb.style.color=color;
+
+  document.getElementById('res-apt-badge').textContent=`${A.emoji} ${A.type}`;
+
+  // Type code & name
+  const tc=document.getElementById('res-type-code');
+  tc.textContent=type;
+  tc.style.background=`linear-gradient(135deg,${color},${BRAND.yellow})`;
+  tc.style.webkitBackgroundClip='text';tc.style.webkitTextFillColor='transparent';tc.style.backgroundClip='text';
+
+  document.getElementById('res-type-name-ja').textContent=P.name;
+  document.getElementById('res-emoji').textContent=A.emoji;
+
+  const mt=document.getElementById('res-main-title');
+  mt.textContent=`${P.name}×${A.type}`;
+  mt.style.background=`linear-gradient(135deg,#fff,${color})`;
+  mt.style.webkitBackgroundClip='text';mt.style.webkitTextFillColor='transparent';mt.style.backgroundClip='text';
+
+  document.getElementById('res-desc').textContent=P.desc;
+
+  // Axes
+  ['axis-bar','traits-bar','bars-bar','jobs-bar','advice-bar'].forEach(id=>{
+    document.getElementById(id).style.background=color;
+  });
+
+  const axisData=[
+    {label:'外向(E) ← → 内向(I)',a:'E',b:'I',la:'E 外向',lb:'I 内向'},
+    {label:'直感(N) ← → 感覚(S)',a:'N',b:'S',la:'N 直感',lb:'S 感覚'},
+    {label:'思考(T) ← → 感情(F)',a:'T',b:'F',la:'T 思考',lb:'F 感情'},
+    {label:'計画(J) ← → 柔軟(P)',a:'J',b:'P',la:'J 計画',lb:'P 柔軟'}
+  ];
+  document.getElementById('res-axes').innerHTML=axisData.map(ax=>{
+    const raw=perScores[ax.a]-perScores[ax.b];
+    const pct=Math.round(Math.min(Math.max((raw+16)/32*100,5),95));
+    const side=pct<50?ax.lb:ax.la;
+    return `<div class="axis-card">
+      <div class="axis-label">${ax.label}</div>
+      <div class="axis-track"><div class="axis-fill" data-v="${pct}" style="background:linear-gradient(90deg,${color},${BRAND.yellow})"></div></div>
+      <div class="axis-ends"><span>${ax.la}</span><span>${ax.lb}</span></div>
+    </div>`;
+  }).join('');
+
+  // Traits
+  document.getElementById('res-traits').innerHTML=A.traits.map(([e,t])=>`<div class="trait">${e} ${t}</div>`).join('');
+
+  // Bars
+  document.getElementById('res-bars').innerHTML=A.bars.map(b=>`
+    <div class="bar-row">
+      <div class="bar-label"><strong>${b.l}</strong><span>${b.v}%</span></div>
+      <div class="bar-track"><div class="bar-fill" data-v="${b.v}" style="background:linear-gradient(90deg,${color},${BRAND.yellow})"></div></div>
+    </div>`).join('');
+
+  // Jobs (combined)
+  const jobs=getJobs(apt,type);
+  document.getElementById('res-jobs').innerHTML=jobs.map(j=>`
+    <div class="job-card">
+      <div style="margin-bottom:4px"><span class="job-match" style="background:${color}22;color:${color};">◎ マッチ</span></div>
+      <div class="job-icon">${j.e}</div>
+      <div class="job-name">${j.n}</div>
+      <div class="job-desc">${j.d}</div>
+    </div>`).join('');
+
+  // Advice
+  const advice=getAdvice(apt,type);
+  document.getElementById('res-advice').innerHTML=advice.map(a=>`
+    <li class="advice-item"><div class="advice-check">✓</div><span>${a}</span></li>`).join('');
+
+  show('screen-result');
+  setTimeout(()=>{
+    document.querySelectorAll('.bar-fill,.axis-fill').forEach(el=>{el.style.width=el.dataset.v+'%';});
+  },200);
+}
+
+function restartTest(){startTest();}
+
+function copyURL(){
+  const url=new URL(location.href);
+  url.searchParams.set('result',currentApt);
+  url.searchParams.set('type',currentType);
+  navigator.clipboard.writeText(url.toString()).then(()=>{
+    const btn=document.getElementById('btn-url');
+    btn.textContent='✓ コピーしました！';btn.classList.add('copied');
+    setTimeout(()=>{btn.innerHTML='🔗 結果URLをコピー';btn.classList.remove('copied');},2200);
+  });
+}
+
+function downloadImage(){
+  if(!currentApt||!currentType)return;
+  const A=APT[currentApt],P=PERS[currentType]||{name:'タイプ',desc:''};
+  const color=A.color;
+  const canvas=document.createElement('canvas');
+  const W=1200,H=630;canvas.width=W;canvas.height=H;
+  const ctx=canvas.getContext('2d');
+  const g=ctx.createLinearGradient(0,0,W,H);
+  g.addColorStop(0,'#142028');g.addColorStop(.6,'#1a2e36');g.addColorStop(1,'#1f3540');
+  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  const tg=ctx.createLinearGradient(0,0,W,0);
+  tg.addColorStop(0,color);tg.addColorStop(1,BRAND.yellow);
+  ctx.fillStyle=tg;ctx.fillRect(0,0,W,6);
+  // Logo
+  ctx.fillStyle=BRAND.teal;ctx.beginPath();ctx.roundRect(60,36,42,42,9);ctx.fill();
+  ctx.fillStyle=BRAND.yellow;ctx.beginPath();ctx.roundRect(80,28,42,42,9);ctx.fill();
+  ctx.fillStyle='#fff';ctx.font='bold 15px system-ui';
+  ctx.fillText('OVER',132,50);ctx.fillText('DOOR',132,68);
+  ctx.fillStyle=BRAND.teal;ctx.font='12px system-ui';
+  ctx.fillText('適職・性格診断',132,86);
+  // Separator
+  ctx.strokeStyle='rgba(56,164,187,.25)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(60,108);ctx.lineTo(W-60,108);ctx.stroke();
+  // Type code big
+  ctx.font='bold 80px system-ui';
+  const tcGrad=ctx.createLinearGradient(60,130,300,200);
+  tcGrad.addColorStop(0,color);tcGrad.addColorStop(1,BRAND.yellow);
+  ctx.fillStyle=tcGrad;ctx.fillText(currentType,60,215);
+  // Type name
+  ctx.font='bold 22px system-ui';ctx.fillStyle='#fff';
+  ctx.fillText(`${P.name} × ${A.type}`,60,250);
+  // Emoji
+  ctx.font='44px serif';ctx.fillText(A.emoji,60,310);
+  // Desc
+  ctx.font='16px system-ui';ctx.fillStyle='#9ca3af';
+  const chars=[...P.desc];let line='',ly=345,mw=W/2-70;
+  for(const ch of chars){const t=line+ch;if(ctx.measureText(t).width>mw&&line){ctx.fillText(line,60,ly);line=ch;ly+=24;}else{line=t;}if(ly>420){ctx.fillText(line+'…',60,ly);line=null;break;}}
+  if(line!=null)ctx.fillText(line,60,ly);
+  // Right: Jobs
+  const rx=W/2+20;
+  ctx.fillStyle=color;ctx.fillRect(rx,126,3,16);
+  ctx.font='bold 13px system-ui';ctx.fillStyle='#9ca3af';ctx.fillText('あなたに最適な職種',rx+12,140);
+  const jobs=getJobs(currentApt,currentType);
+  jobs.forEach((j,i)=>{
+    const col=i%2,row=Math.floor(i/2);
+    const jx=rx+col*265,jy=158+row*90;
+    ctx.fillStyle='rgba(56,164,187,.07)';ctx.beginPath();ctx.roundRect(jx,jy,252,78,10);ctx.fill();
+    ctx.strokeStyle='rgba(56,164,187,.2)';ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(jx,jy,252,78,10);ctx.stroke();
+    ctx.font='22px serif';ctx.fillText(j.e,jx+11,jy+30);
+    ctx.font='bold 13px system-ui';ctx.fillStyle='#f3f4f6';ctx.fillText(j.n.length>14?j.n.slice(0,14)+'…':j.n,jx+44,jy+24);
+    ctx.font='11px system-ui';ctx.fillStyle='#6b7280';ctx.fillText(j.d,jx+44,jy+46);
+  });
+  // Axes visual
+  const ay=370;
+  ctx.fillStyle=color;ctx.fillRect(rx,ay-14,3,16);
+  ctx.font='bold 13px system-ui';ctx.fillStyle='#9ca3af';ctx.fillText('性格プロファイル',rx+12,ay);
+  const axShort=[['EI','E','I'],['NS','N','S'],['TF','T','F'],['JP','J','P']];
+  axShort.forEach(([,a,b],i)=>{
+    const ax=rx+(i%2)*270,axY=ay+18+(Math.floor(i/2)*50);
+    const raw=perScores[a]-perScores[b];
+    const pct=Math.min(Math.max((raw+16)/32*100,5),95);
+    ctx.fillStyle='rgba(255,255,255,.05)';ctx.beginPath();ctx.roundRect(ax,axY,252,32,6);ctx.fill();
+    const fg=ctx.createLinearGradient(ax,0,ax+252,0);fg.addColorStop(0,color);fg.addColorStop(1,BRAND.yellow);
+    ctx.fillStyle=fg;ctx.beginPath();ctx.roundRect(ax,axY,252*pct/100,32,6);ctx.fill();
+    ctx.font='bold 12px system-ui';ctx.fillStyle='#fff';
+    ctx.fillText(a,ax+8,axY+21);ctx.fillText(b,ax+228,axY+21);
+  });
+  // Footer
+  ctx.fillStyle='rgba(56,164,187,.15)';ctx.fillRect(0,H-48,W,48);
+  ctx.font='13px system-ui';ctx.fillStyle=BRAND.teal;
+  ctx.fillText('"働く"の可能性を、もっと楽しく　|　OVERDOOR 適職・性格診断',60,H-16);
+  const a=document.createElement('a');
+  a.download=`OVERDOOR_診断_${currentType}_${A.type}.png`;
+  a.href=canvas.toDataURL('image/png');a.click();
+}
+
+// URL param on load
+(function(){
+  const p=new URLSearchParams(location.search);
+  const apt=p.get('result'),type=p.get('type');
+  if(apt&&APT[apt]&&type&&type.length===4){
+    currentApt=apt;currentType=type;showResult(apt,type);
+  }
+})();
+</script>
+</body>
+</html>
