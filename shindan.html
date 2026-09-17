@@ -106,6 +106,57 @@ body{background:linear-gradient(160deg,var(--bg) 0%,var(--bg2) 60%,#1f3540 100%)
 .res-footer{text-align:center;margin-top:22px;padding-top:18px;border-top:1px solid var(--border);}
 .res-footer-tagline{font-size:11px;color:#4a6470;letter-spacing:.05em;margin-top:6px;}
 @media(max-width:480px){.jobs-grid,.axis-grid,.share-grid{grid-template-columns:1fr;}}
+
+/* ===== LIGHT THEME OVERRIDE (2026-09) ===== */
+:root{--bg:#eef4f6;--bg2:#f8fbfc;--surface:#ffffff;--border:#d5e5ea;--text:#1b2a31;--muted:#4b5a62;--subtle:#6b7980;}
+body{background:linear-gradient(160deg,#ffffff 0%,#f5f9fa 55%,#eaf3f6 100%);color:var(--text);}
+.header-label{font-size:13px;color:#2a8aa0;opacity:1;}
+.start-title{font-size:clamp(30px,8vw,48px);background:none;-webkit-text-fill-color:#1b2a31;color:#1b2a31;}
+.start-sub{color:var(--muted);font-size:15px;}
+.badge{background:#ffffff;color:var(--muted);box-shadow:0 1px 3px rgba(37,63,72,.06);}
+.btn-restart{background:#ffffff;color:#2a8aa0;}
+.phase-dot{background:#ffffff;}
+.phase-label{font-size:12px;color:var(--muted);}
+.prog-counter{color:#2a8aa0;}
+.prog-cat{color:#1f7488;background:rgba(56,164,187,.14);}
+.prog-track,.axis-track,.bar-track{background:#e3eef1;}
+.section-header{box-shadow:0 2px 10px rgba(37,63,72,.05);}
+.section-title-sm{font-size:16px;font-weight:900;color:#1b2a31;margin-bottom:3px;}
+.section-sub{font-size:12px;color:var(--muted);}
+.q-card{box-shadow:0 4px 18px rgba(37,63,72,.07);}
+.q-num{font-size:13px;color:#2a8aa0;}
+.q-text{font-size:19px;font-weight:900;color:#1b2a31;}
+.opt-btn{background:#ffffff;color:var(--text);box-shadow:0 1px 4px rgba(37,63,72,.05);}
+.opt-btn:hover{background:#f0f8fa;}
+.opt-icon{background:#f0f6f8;}
+.res-hero{background:linear-gradient(135deg,#ffffff,#f4fafb);box-shadow:0 4px 18px rgba(37,63,72,.07);}
+.type-name-ja{font-size:17px;color:var(--muted);font-weight:700;}
+.res-main-title{font-size:26px;}
+.res-desc{font-size:14px;color:var(--muted);}
+.res-section{box-shadow:0 2px 10px rgba(37,63,72,.05);}
+.sec-title{font-size:17px;font-weight:900;color:#1b2a31;letter-spacing:.04em;margin-bottom:16px;gap:10px;}
+.sec-bar{width:4px;height:18px;}
+.trait{background:#f3f8f9;border-color:#dbe8ec;color:var(--text);}
+.axis-card,.job-card{background:#f7fbfc;border-color:#dbe8ec;}
+.axis-label{font-size:12px;color:var(--muted);font-weight:700;}
+.axis-ends{color:var(--subtle);}
+.bar-label{color:var(--muted);}
+.job-name{font-size:14px;color:#1b2a31;}
+.job-desc{font-size:12px;color:var(--muted);}
+.advice-item{font-size:14px;color:var(--text);}
+.advice-check{background:rgba(30,158,82,.12);color:#1e9e52;}
+.btn-url.copied{background:rgba(30,158,82,.1);color:#1e9e52;border-color:#1e9e52;}
+.res-footer-tagline{color:var(--subtle);}
+.type-code{background:none !important;-webkit-text-fill-color:#2a8aa0 !important;color:#2a8aa0 !important;}
+.res-main-title{background:none !important;-webkit-text-fill-color:#1b2a31 !important;color:#1b2a31 !important;}
+.personality-badge{color:#1b2a31 !important;}
+/* RESERVE CTA */
+.reserve-box{background:linear-gradient(135deg,#253F48,#2f5663);border-radius:20px;padding:26px 22px;margin:18px 0 14px;text-align:center;color:#fff;box-shadow:0 6px 24px rgba(37,63,72,.18);}
+.reserve-lead{font-size:18px;font-weight:900;line-height:1.5;margin-bottom:8px;color:#fff;}
+.reserve-sub{font-size:13px;line-height:1.75;color:rgba(255,255,255,.82);margin-bottom:18px;}
+.btn-reserve{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:linear-gradient(135deg,var(--yellow),#d4c61c);color:#253F48;border-radius:14px;padding:17px 16px;font-size:16px;font-weight:900;text-decoration:none;box-shadow:0 4px 18px rgba(224,210,36,.35);transition:transform .15s;}
+.btn-reserve:hover{transform:translateY(-2px);}
+.reserve-note{font-size:11px;color:rgba(255,255,255,.65);margin-top:10px;}
 </style>
 </head>
 <body>
@@ -114,8 +165,8 @@ body{background:linear-gradient(160deg,var(--bg) 0%,var(--bg2) 60%,#1f3540 100%)
     <svg width="120" height="32" viewBox="0 0 120 32" fill="none">
       <rect x="0" y="5" width="22" height="22" rx="5" fill="#38A4BB"/>
       <rect x="10" y="0" width="22" height="22" rx="5" fill="#E0D224"/>
-      <text x="38" y="13" font-family="system-ui,sans-serif" font-weight="900" font-size="10" fill="#fff" letter-spacing="1">OVER</text>
-      <text x="38" y="25" font-family="system-ui,sans-serif" font-weight="900" font-size="10" fill="#fff" letter-spacing="1">DOOR</text>
+      <text x="38" y="13" font-family="system-ui,sans-serif" font-weight="900" font-size="10" fill="#253F48" letter-spacing="1">OVER</text>
+      <text x="38" y="25" font-family="system-ui,sans-serif" font-weight="900" font-size="10" fill="#253F48" letter-spacing="1">DOOR</text>
     </svg>
     <div class="header-div"></div>
     <span class="header-label">適職・性格診断</span>
@@ -132,14 +183,14 @@ body{background:linear-gradient(160deg,var(--bg) 0%,var(--bg2) 60%,#1f3540 100%)
       <div class="badge">🔒 無料・匿名</div>
     </div>
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin-bottom:28px;">
-      <div style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;">診断の構成</div>
+      <div style="font-size:15px;color:#1b2a31;margin-bottom:12px;font-weight:900;letter-spacing:.06em;">診断の構成</div>
       <div style="display:flex;flex-direction:column;gap:8px;">
         <div style="display:flex;align-items:center;gap:10px;font-size:13px;">
           <span style="background:rgba(56,164,187,.2);color:var(--teal);border-radius:6px;padding:3px 9px;font-weight:700;font-size:11px;white-space:nowrap;">前半 Q1-12</span>
           <span style="color:var(--muted);">適職タイプ診断（価値観・強み・働き方）</span>
         </div>
         <div style="display:flex;align-items:center;gap:10px;font-size:13px;">
-          <span style="background:rgba(224,210,36,.15);color:#c8bc1a;border-radius:6px;padding:3px 9px;font-weight:700;font-size:11px;white-space:nowrap;">後半 Q13-28</span>
+          <span style="background:rgba(224,210,36,.15);color:#8a7f0a;border-radius:6px;padding:3px 9px;font-weight:700;font-size:11px;white-space:nowrap;">後半 Q13-28</span>
           <span style="color:var(--muted);">性格タイプ診断（思考・行動・判断スタイル）</span>
         </div>
       </div>
@@ -214,6 +265,14 @@ body{background:linear-gradient(160deg,var(--bg) 0%,var(--bg2) 60%,#1f3540 100%)
       <ul class="advice-list" id="res-advice"></ul>
     </div>
 
+    <!-- 面談予約CTA：RESERVE_URL（scriptの先頭）に予約ページURLを入れると有効になります -->
+    <div class="reserve-box">
+      <div class="reserve-lead">この診断結果をもとに<br>キャリアアドバイザーと話してみませんか？</div>
+      <p class="reserve-sub">あなたのタイプに合う求人・キャリアの選び方を、<br>無料の個別面談でご提案します。</p>
+      <a class="btn-reserve" id="btn-reserve" href="#" target="_blank" rel="noopener">📅 無料キャリア面談を予約する</a>
+      <div class="reserve-note">オンライン対応／所要30分程度</div>
+    </div>
+
     <div class="share-grid">
       <button class="btn-url" id="btn-url" onclick="copyURL()">🔗 結果URLをコピー</button>
       <button class="btn-img" onclick="downloadImage()">📥 結果カードを保存</button>
@@ -223,8 +282,8 @@ body{background:linear-gradient(160deg,var(--bg) 0%,var(--bg2) 60%,#1f3540 100%)
       <svg width="100" height="26" viewBox="0 0 120 32" fill="none">
         <rect x="0" y="5" width="22" height="22" rx="5" fill="#38A4BB"/>
         <rect x="10" y="0" width="22" height="22" rx="5" fill="#E0D224"/>
-        <text x="38" y="13" font-family="system-ui,sans-serif" font-weight="900" font-size="10" fill="#fff" letter-spacing="1">OVER</text>
-        <text x="38" y="25" font-family="system-ui,sans-serif" font-weight="900" font-size="10" fill="#fff" letter-spacing="1">DOOR</text>
+        <text x="38" y="13" font-family="system-ui,sans-serif" font-weight="900" font-size="10" fill="#253F48" letter-spacing="1">OVER</text>
+        <text x="38" y="25" font-family="system-ui,sans-serif" font-weight="900" font-size="10" fill="#253F48" letter-spacing="1">DOOR</text>
       </svg>
       <div class="res-footer-tagline">"働く"の可能性を、もっと楽しく</div>
     </div>
@@ -232,6 +291,9 @@ body{background:linear-gradient(160deg,var(--bg) 0%,var(--bg2) 60%,#1f3540 100%)
 </div>
 
 <script>
+// ▼面談予約URL（Timerex等）。空欄の間はボタンを押しても何も起きません
+const RESERVE_URL = "";
+document.addEventListener("DOMContentLoaded",()=>{const b=document.getElementById("btn-reserve");if(!b)return;if(RESERVE_URL){b.href=RESERVE_URL;}else{b.addEventListener("click",e=>e.preventDefault());}});
 const BRAND={teal:"#38A4BB",yellow:"#E0D224",dark:"#253F48",bg:"#142028"};
 
 // ============================================================
@@ -585,7 +647,7 @@ function showResult(apt, type){
   // Type code & name
   const tc=document.getElementById('res-type-code');
   tc.textContent=type;
-  tc.style.background=`linear-gradient(135deg,${color},${BRAND.yellow})`;
+  tc.style.background=`linear-gradient(135deg,${BRAND.dark},${color})`;
   tc.style.webkitBackgroundClip='text';tc.style.webkitTextFillColor='transparent';tc.style.backgroundClip='text';
 
   document.getElementById('res-type-name-ja').textContent=P.name;
@@ -593,7 +655,7 @@ function showResult(apt, type){
 
   const mt=document.getElementById('res-main-title');
   mt.textContent=`${P.name}×${A.type}`;
-  mt.style.background=`linear-gradient(135deg,#fff,${color})`;
+  mt.style.background=`linear-gradient(135deg,${BRAND.dark},${color})`;
   mt.style.webkitBackgroundClip='text';mt.style.webkitTextFillColor='transparent';mt.style.backgroundClip='text';
 
   document.getElementById('res-desc').textContent=P.desc;
